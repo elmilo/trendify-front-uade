@@ -1,7 +1,18 @@
 import React from 'react';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
+import Dashboard from './dashboard/Dashboard.js';
 
+function App() {
+  return (
+    <Dashboard />
+  );
+}
+
+//ReactDOM.render(<App />, document.querySelector('#app'));
+
+
+/*
 function App() {
   return (
     <div className="App">
@@ -21,6 +32,6 @@ function App() {
       </header>
     </div>
   );
-}
+}*/
 
 export default App;
