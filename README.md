@@ -1,5 +1,14 @@
-Trendify - We Know
+![Trendify](src/trendify_dark.svg)
 
-Frontend de Trendify, una aplicación para Seminario 1 - UADE
+# Trendify - we KNOW
 
-2020
+Este proyecto en REACTJS es parte de la materia Seminario Profesional 1, UADE.
+
+Frontend de Trendify
+
+
+UADE - 2020
+
+## Contenido
+
+_En desarrollo_
