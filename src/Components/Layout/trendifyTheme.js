@@ -9,6 +9,8 @@ const trendifyTheme = createMuiTheme({
   palette: {
     primary: {
         main: '#2064EC',
+        dark: '#2D2D37',
+        light: '#E2E3E4',
       },
     secondary: {
       main: '#0BCE64'
