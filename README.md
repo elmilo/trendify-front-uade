@@ -1,4 +1,4 @@
-![Trendify](src/trendify_dark.svg)
+![Trendify](Assets/Images/trendify_dark.svg)
 
 # Trendify - we KNOW
 

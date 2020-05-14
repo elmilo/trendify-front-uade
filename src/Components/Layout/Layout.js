@@ -19,7 +19,7 @@ import Box from "@material-ui/core/Box";
 
 import { mainListItems, secondaryListItems } from "./Menu/listItems";
 import logo_dark from "../../Assets/Images/trendify_dark.svg";
-import trendifyTheme from '../../trendifyTheme.js';
+import trendifyTheme from './trendifyTheme.js';
 import Copyright from './Copyright.js';
 
 const drawerWidth = 240;
