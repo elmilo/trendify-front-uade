@@ -14,7 +14,8 @@
     "react-file-reader": "^1.1.4",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
-    "recharts": "^1.8.5"
+    "recharts": "^1.8.5",
+    "xlsx": "^0.16.0"
   },
   "scripts": {
     "start": "react-scripts start",

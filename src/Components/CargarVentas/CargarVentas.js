@@ -1,6 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import Layout from '../Layout/Layout.js';
+import TablaArchivos from './TablaArchivos.js';
 import { useDropzone } from 'react-dropzone';
+import XLSX from 'xlsx/xlsx';
 
 const baseStyle = {
   flex: 1,
@@ -31,23 +33,38 @@ const rejectStyle = {
 };
 
 export default function CargarVentas(props) {
-  
+
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file) => {
-      const reader = new FileReader()
+
+      const reader = new FileReader();
+      const rABS = !!reader.readAsBinaryString;
 
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-      // Do whatever you want with the file contents
-        const binaryStr = reader.result
-        console.log(binaryStr)
+      reader.onload = (e) => {
+
+        const bstr = e.target.result;
+        const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array', bookVBA: true });
+
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+
+        for (var key in sheet) {
+          if (sheet.hasOwnProperty(key) && key.indexOf('!')) {
+            console.log(key + " -> " + sheet[key]);
+          }
+        }
       }
-      reader.readAsArrayBuffer(file)
+
+      if (rABS) {
+        reader.readAsBinaryString(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      };
+
     })
-    
   }, [])
-  
+
   const {
     acceptedFiles,
     getRootProps,
@@ -86,10 +103,9 @@ export default function CargarVentas(props) {
             <p></p>
             <em>(Solo se aceptarán *.xls o bien *.xlsx)</em>
           </div>
-          <aside>
-            <h4>Archivos</h4>
-            <ul>{files}</ul>
-          </aside>
+
+          {acceptedFiles.length > 0 && <TablaArchivos files={acceptedFiles}/> }
+
         </div>
       </Layout>
     </div>
