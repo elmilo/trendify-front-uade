@@ -1,53 +1,50 @@
 import axios from "axios";
-const TRENDIFY_ENDPOINT = "http://localhost:3001/api/";
+const TRENDIFY_ENDPOINT = "http://nolaborables.com.ar/api/v2/";
 
-const instance = axios.create({
-    baseURL: TRENDIFY_ENDPOINT,
-    //Solo sin son necesarios
-    /*headers: {
-    }*/
-});
+export const getDataFeriados = (anio) => {
+  return axios.get(TRENDIFY_ENDPOINT + "/feriados/" + anio).then((response) => {
+    //console.log("axios response.data " + response.data);
+    return response.data;
+  });
+};
 
-export default {
-    postExcelData: (ExcelData) =>
-    instance({
-        'method': 'POST',
-        'url':'/query',
-        'data': ExcelData,
-        'headers': { 'content-type':'application/json'},
-    }),
-    getData: (symbol) =>
-    instance({
-        'method':'GET',
-        'url':'/query',
-        'params': {
-            'search':'parameter',
-            'symbol': symbol.toUpperCase()
-        },
-        transformResponse: [function (data) {
-            //Transformar respuesta, por si se quiere algo.
-            // Do whatever you want to transform the data
-            console.log('Transforming data...')
-            const json = JSON.parse(data)
-            // list of nested object keys
-            const dates = Object.keys(json['nested object'])
-            data = {
-                dates
-            }
-            return data;
-        }],
-    }),
-}
+export const getTrendData = (parameter) => {
+  /*return axios
+      .get(TRENDIFY_ENDPOINT + "/feriados/" + anio)
+      .then(response => {
+        //console.log("axios response.data " + response.data);
+        return response.data;
+      });*/
+  function createData(time, amount) {
+    return { time, amount };
+  }
+  const response = [
+    createData("00:00", Math.floor(Math.random() * parameter)),
+    createData("03:00", Math.floor(Math.random() * parameter)),
+    createData("06:00", Math.floor(Math.random() * parameter)),
+    createData("09:00", Math.floor(Math.random() * parameter)),
+    createData("12:00", Math.floor(Math.random() * parameter)),
+    createData("15:00", Math.floor(Math.random() * parameter)),
+    createData("18:00", Math.floor(Math.random() * parameter)),
+    createData("21:00", Math.floor(Math.random() * parameter)),
+    createData("24:00", Math.floor(Math.random() * parameter)),
+  ];
 
+  return response;
+};
 
-/*
-import Axios as api from '../Axios/Axios'
-api.postExcelData(myExcelData)               
-        .then((response)=>{
-            console.log(response)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+export const postExcelData = (ExcelData) => {
+  /*const newUserObject = {
+        username: newUser.username,
+        password: md5(newUser.password),
+        email: newUser.email
+    };*/
 
-*/
+  return axios
+    .post(TRENDIFY_ENDPOINT + "DataEndpoint" + ExcelData)
+    .then((response) => {
+      console.log("axios response.data " + response.data);
+      return response.data;
+    });
+};
+
