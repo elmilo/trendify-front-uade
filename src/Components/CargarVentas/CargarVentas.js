@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Layout from '../Layout/Layout.js';
 import TablaArchivos from './TablaArchivos.js';
+import TablaProceso from './TablaProceso.js';
 import { useDropzone } from 'react-dropzone';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Container from '@material-ui/core/Container';
@@ -8,6 +9,11 @@ import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import XLSX from 'xlsx/xlsx';
+import dataUploadResponse from "../../Assets/dataUploadResponse";
+import dataUploadResponseError from "../../Assets/dataUploadResponseError";
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import { Link } from "react-router-dom";
 
 const baseStyle = {
   flex: 1,
@@ -59,6 +65,9 @@ const useStyles = makeStyles((theme) => ({
 export default function CargarVentas(props) {
 
   const [isUploading, setIsUploading] = useState(false);
+  const [hasUploadResponse, setHasUploadResponse] = useState(false);
+  const [hasUploadErrors, setHasUploadErrors] = useState(false);
+  const [uploadResponse, setUploadResponse] = useState({});
   const [consumos, setConsumos] = useState([]);
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -98,13 +107,27 @@ export default function CargarVentas(props) {
     })
   }, [])
 
-  const onUpload = function() {
-    
+  const onUpload = function () {
+
     setIsUploading(true);
-    
+
     //Simula la pegada a la API
-    setTimeout(() => { 
+    setTimeout(() => {
+
+      var dUploadResponse = dataUploadResponseError; //Simula la respuesta enviada por la API
+
       setIsUploading(false);
+      setHasUploadResponse(true);
+      setUploadResponse(dUploadResponse);
+      setHasUploadErrors(dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success));
+      
+      acceptedFiles.length = 0;
+      acceptedFiles.splice(0, acceptedFiles.length);
+
+      if (inputRef && inputRef.current) {
+        inputRef.current.value = '';
+      }
+
     }, 3000);
   }
 
@@ -114,7 +137,8 @@ export default function CargarVentas(props) {
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
+    isDragReject,
+    inputRef
   } = useDropzone({ accept: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', noKeyboard: true, onDrop });
 
   const style = useMemo(() => ({
@@ -128,36 +152,75 @@ export default function CargarVentas(props) {
     isDragAccept
   ]);
 
+  const clearState = function() {
+    setIsUploading(false);
+    setHasUploadErrors(false);
+    setHasUploadResponse(false);
+    setUploadResponse({});
+    setConsumos([]);
+  }
+
   const classes = useStyles();
 
   return (
     <div>
       <Layout title="Cargar Ventas">
         <div className="container">
-          <div {...getRootProps({ style })}>
-            <CloudUploadIcon color="primary" fontSize="large" />
-            <input {...getInputProps()} />
-            {isDragAccept && (<p>!Todos los archivos serán aceptados!</p>)}
-            {isDragReject && (<p>Algunos archivos no tienen el formato permitido.</p>)}
-            {!isDragActive && (<p>Arrastrá los archivos aquí, o bien haz click para seleccionarlos...</p>)}
-            <p></p>
-            <em>(Solo se aceptarán *.xls o bien *.xlsx)</em>
-          </div>
-
-          {acceptedFiles.length > 0 &&
-
+          
+          {!hasUploadResponse &&
             <div>
-              <TablaArchivos files={acceptedFiles} />
+              <div {...getRootProps({ style })}>
+                <CloudUploadIcon color="primary" fontSize="large" />
+                <input {...getInputProps()} />
+                {isDragAccept && (<p>!Todos los archivos serán aceptados!</p>)}
+                {isDragReject && (<p>Algunos archivos no tienen el formato permitido.</p>)}
+                {!isDragActive && (<p>Arrastrá los archivos aquí, o bien haz click para seleccionarlos...</p>)}
+                <p></p>
+                <em>(Solo se aceptarán *.xls o bien *.xlsx)</em>
+              </div>
 
-              {isUploading && <LinearProgress color="secondary" className={classes.progressBar}/> }
+              {acceptedFiles.length > 0 &&
 
-              <Container maxWidth="lg" className={classes.buttonContainer}>
+                <div>
+                  <TablaArchivos files={acceptedFiles} />
 
-                { !isUploading && <Button variant="contained" className={classes.uploadButton} color="secondary" fullWidth={true} onClick={onUpload}>Importar</Button> }
-                { isUploading && <Button variant="contained" className={classes.uploadButton} color="secondary" fullWidth={true} disabled>Procesando...</Button> }
+                  {isUploading && <LinearProgress color="secondary" className={classes.progressBar} />}
 
-              </Container>
+                  <Container maxWidth="lg" className={classes.buttonContainer}>
+
+                    {!isUploading && <Button variant="contained" className={classes.uploadButton} color="secondary" fullWidth={true} onClick={onUpload}>Importar</Button>}
+                    {isUploading && <Button variant="contained" className={classes.uploadButton} color="secondary" fullWidth={true} disabled>Procesando...</Button>}
+
+                  </Container>
+                </div>
+              }
             </div>
+          }
+
+          {hasUploadResponse && !hasUploadErrors &&
+              <div>
+                <Container maxWidth="lg">
+                  <Card className={classes.root}>
+                    <CardHeader title="Los archivos fueron importados correctamente." />
+                  </Card>
+                </Container>
+              </div>
+          }
+
+          {hasUploadResponse && hasUploadErrors &&
+
+              <div>
+                <Container maxWidth="lg">
+                  <Card className={classes.root}>
+                    <CardHeader title="Alguno de los archivos contiene consumos con errores. Por favor, realice las correcciones correspondiente y vuelva a importarlo." />
+                  </Card>
+                </Container>
+
+                <TablaProceso data={uploadResponse}/>
+
+                <Button component={Link} to="/cargarVentas" variant="contained" color="default" fullWidth="true" className={classes.nextLevelButton} onClick={clearState}>Volver a Cargar ventas</Button>
+
+              </div> 
           }
 
         </div>

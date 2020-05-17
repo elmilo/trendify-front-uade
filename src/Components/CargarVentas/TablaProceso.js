@@ -35,7 +35,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TablaArchivos(props) {
+export default function TablaProceso(props) {
 
   const classes = useStyles();
 
@@ -44,18 +44,22 @@ export default function TablaArchivos(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Archivo</StyledTableCell>
-            <StyledTableCell align="right">Tamaño (KB)</StyledTableCell>
+            <StyledTableCell align="center">Cod. Barra</StyledTableCell>
+            <StyledTableCell align="center">Fecha</StyledTableCell>
+            <StyledTableCell>Mensaje</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.files.map((file) => (
-            <StyledTableRow  key={file.path}>
-              <StyledTableCell component="th" scope="row">
-                {file.path}
-              </StyledTableCell>
-              <StyledTableCell align="right">{file.size / 1000}</StyledTableCell>
+          {props.data.consumos.map((consumo) => (
+
+            !consumo.success &&
+
+            <StyledTableRow  key={consumo.codigo_barra + consumo.fecha}>
+              <StyledTableCell component="th" scope="row" align="center">{consumo.codigo_barra}</StyledTableCell>
+              <StyledTableCell align="center">{consumo.fecha}</StyledTableCell>
+              <StyledTableCell>{consumo.message}</StyledTableCell>
             </StyledTableRow>
+
           ))}
         </TableBody>
       </Table>
