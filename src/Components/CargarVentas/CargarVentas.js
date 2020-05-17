@@ -1,231 +1,204 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React from "react";
 import Layout from '../Layout/Layout.js';
 import TablaArchivos from './TablaArchivos.js';
 import TablaProceso from './TablaProceso.js';
-import { useDropzone } from 'react-dropzone';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CustomDropZone from "./CustomDropZone.js";
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { makeStyles } from '@material-ui/core/styles';
+import { styled } from '@material-ui/core/styles';
 import XLSX from 'xlsx/xlsx';
+
 import dataUploadResponse from "../../Assets/dataUploadResponse";
 import dataUploadResponseError from "../../Assets/dataUploadResponseError";
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import { Link } from "react-router-dom";
 
-const baseStyle = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px',
-  borderWidth: 2,
-  borderRadius: 2,
-  borderColor: '#eeeeee',
-  borderStyle: 'dashed',
-  backgroundColor: '#fafafa',
-  color: '#bdbdbd',
-  outline: 'none',
-  transition: 'border .24s ease-in-out'
-};
-
-const activeStyle = {
-  borderColor: '#2196f3'
-};
-
-const acceptStyle = {
-  borderColor: '#00e676'
-};
-
-const rejectStyle = {
-  borderColor: '#ff1744'
-};
-
-const useStyles = makeStyles((theme) => ({
-  buttonContainer: {
-    padding: '15px 0',
-    textAlign: 'center'
-  },
-  uploadButton: {
-    'border-radius': '0.2rem !important',
-    'margin': '0 3px',
-    '& span': {
-      padding: '5px !important',
-      fontSize: '18px'
-    }
-  },
-  progressBar: {
-    width: '100%',
-    marginTop: '20px',
+const ImportarButton = styled(Button)({
+  'border-radius': '0.2rem !important',
+  '& span': {
+    padding: '5px !important',
+    fontSize: '18px'
   }
-}));
+});
 
-export default function CargarVentas(props) {
+const VolverButton = styled(Button)({
+  'border-radius': '0.2rem !important',
+  'margin': '15px 0',
+  '& span': {
+    padding: '5px !important',
+    fontSize: '18px'
+  }
+});
 
-  const [isUploading, setIsUploading] = useState(false);
-  const [hasUploadResponse, setHasUploadResponse] = useState(false);
-  const [hasUploadErrors, setHasUploadErrors] = useState(false);
-  const [uploadResponse, setUploadResponse] = useState({});
-  const [consumos, setConsumos] = useState([]);
+const ButtonContainer = styled(Container)({
+  padding: '15px 0',
+  textAlign: 'center'
+});
 
-  const onDrop = useCallback((acceptedFiles) => {
+const LoadingProgressBar = styled(LinearProgress)({
+  width: '100%',
+  marginTop: '20px',
+});
 
-    acceptedFiles.forEach((file) => {
+export class CargarVentas extends React.Component {
 
-      const reader = new FileReader();
-      const rABS = !!reader.readAsBinaryString;
+  constructor(props) {
+    super(props);
 
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = (e) => {
+    this.state = {
+      files: [],
+      isUploading: false,
+      hasUploadResponse: false,
+      hasUploadErrors: false,
+      uploadResponse: null,
+      consumos: []
+    }
 
-        const wb = XLSX.read(e.target.result, { type: rABS ? 'binary' : 'array', bookVBA: true });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet);
+    this.onDropFile = this.onDropFile.bind(this);
+    this.onUploadFiles = this.onUploadFiles.bind(this);
+    this.clearState = this.clearState.bind(this);
+  }
 
-        const excludeRows = [0];
+  onDropFile = function (file) {
 
-        var nuevosConsumos = json.filter((obj, index) => !excludeRows.includes(index)).map((row) => {
-          return {
-            codigo_barra: row.__EMPTY_1,
-            ventas: row.__EMPTY_2,
-            fecha: row.__EMPTY_3,
-            stock: row.__EMPTY_4
-          };
-        });
+    this.setState(prevState => ({
+      ...prevState,
+      files: [...prevState.files, file]
+    }));
 
-        setConsumos(prevConsumos => prevConsumos.concat(nuevosConsumos));
-      }
+    const reader = new FileReader();
+    const rABS = !!reader.readAsBinaryString;
 
-      if (rABS) {
-        reader.readAsBinaryString(file);
-      } else {
-        reader.readAsArrayBuffer(file);
-      };
-    })
-  }, [])
+    reader.onabort = () => console.log('file reading was aborted')
+    reader.onerror = () => console.log('file reading has failed')
+    reader.onload = (e) => {
 
-  const onUpload = function () {
+      const wb = XLSX.read(e.target.result, { type: rABS ? 'binary' : 'array', bookVBA: true });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
 
-    setIsUploading(true);
+      const excludeRows = [0];
+
+      var nuevosConsumos = json.filter((obj, index) => !excludeRows.includes(index)).map((row) => {
+        return {
+          codigo_barra: row.__EMPTY_1,
+          ventas: row.__EMPTY_2,
+          fecha: row.__EMPTY_3,
+          stock: row.__EMPTY_4
+        };
+      });
+
+      this.setState(prevState => ({
+        ...prevState,
+        consumos: [...prevState.consumos, nuevosConsumos]
+      }));
+    }
+
+    if (rABS) {
+      reader.readAsBinaryString(file);
+    } else {
+      reader.readAsArrayBuffer(file);
+    };
+  }
+
+  onUploadFiles = function () {
+
+    this.setState(prevState => ({
+      ...prevState,
+      isUploading: true
+    }));
 
     //Simula la pegada a la API
     setTimeout(() => {
 
       var dUploadResponse = dataUploadResponseError; //Simula la respuesta enviada por la API
 
-      setIsUploading(false);
-      setHasUploadResponse(true);
-      setUploadResponse(dUploadResponse);
-      setHasUploadErrors(dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success));
-      
-      acceptedFiles.length = 0;
-      acceptedFiles.splice(0, acceptedFiles.length);
-
-      if (inputRef && inputRef.current) {
-        inputRef.current.value = '';
-      }
+      this.setState(prevState => ({
+        ...prevState,
+        isUploading: false,
+        hasUploadResponse: true,
+        uploadResponse: dUploadResponse,
+        hasUploadErrors: dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success),
+        files: []
+      }));
 
     }, 3000);
   }
 
-  const {
-    acceptedFiles,
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragAccept,
-    isDragReject,
-    inputRef
-  } = useDropzone({ accept: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', noKeyboard: true, onDrop });
-
-  const style = useMemo(() => ({
-    ...baseStyle,
-    ...(isDragActive ? activeStyle : {}),
-    ...(isDragAccept ? acceptStyle : {}),
-    ...(isDragReject ? rejectStyle : {})
-  }), [
-    isDragActive,
-    isDragReject,
-    isDragAccept
-  ]);
-
-  const clearState = function() {
-    setIsUploading(false);
-    setHasUploadErrors(false);
-    setHasUploadResponse(false);
-    setUploadResponse({});
-    setConsumos([]);
+  clearState = function () {
+    this.setState({
+      files: [],
+      isUploading: false,
+      hasUploadResponse: false,
+      hasUploadErrors: false,
+      uploadResponse: null,
+      consumos: []
+    });
   }
 
-  const classes = useStyles();
+  render() {
 
-  return (
-    <div>
-      <Layout title="Cargar Ventas">
-        <div className="container">
-          
-          {!hasUploadResponse &&
-            <div>
-              <div {...getRootProps({ style })}>
-                <CloudUploadIcon color="primary" fontSize="large" />
-                <input {...getInputProps()} />
-                {isDragAccept && (<p>!Todos los archivos serán aceptados!</p>)}
-                {isDragReject && (<p>Algunos archivos no tienen el formato permitido.</p>)}
-                {!isDragActive && (<p>Arrastrá los archivos aquí, o bien haz click para seleccionarlos...</p>)}
-                <p></p>
-                <em>(Solo se aceptarán *.xls o bien *.xlsx)</em>
+    return (
+      <div>
+        <Layout title="Cargar Ventas">
+          <div className="container">
+
+            {!this.state.hasUploadResponse &&
+              <div>
+
+                <CustomDropZone onDropFile={this.onDropFile} />
+
+                {this.state.files && this.state.files.length > 0 &&
+
+                  <div>
+                    <TablaArchivos files={this.state.files} />
+
+                    {this.state.isUploading && <LoadingProgressBar color="secondary" />}
+
+                    <ButtonContainer maxWidth="lg">
+
+                      {!this.state.isUploading && <ImportarButton variant="contained" color="secondary" fullWidth onClick={this.onUploadFiles}>Importar</ImportarButton>}
+                      {this.state.isUploading && <ImportarButton variant="contained" color="secondary" fullWidth disabled>Procesando...</ImportarButton>}
+
+                    </ButtonContainer>
+                  </div>
+                }
               </div>
+            }
 
-              {acceptedFiles.length > 0 &&
-
-                <div>
-                  <TablaArchivos files={acceptedFiles} />
-
-                  {isUploading && <LinearProgress color="secondary" className={classes.progressBar} />}
-
-                  <Container maxWidth="lg" className={classes.buttonContainer}>
-
-                    {!isUploading && <Button variant="contained" className={classes.uploadButton} color="secondary" fullWidth={true} onClick={onUpload}>Importar</Button>}
-                    {isUploading && <Button variant="contained" className={classes.uploadButton} color="secondary" fullWidth={true} disabled>Procesando...</Button>}
-
-                  </Container>
-                </div>
-              }
-            </div>
-          }
-
-          {hasUploadResponse && !hasUploadErrors &&
+            {this.state.hasUploadResponse && !this.state.hasUploadErrors &&
               <div>
                 <Container maxWidth="lg">
-                  <Card className={classes.root}>
-                    <CardHeader title="Los archivos fueron importados correctamente." />
-                  </Card>
+                  <h1>Importación de archivos exitosa</h1>
+                  <em></em>
+                  <p>Todos los archivos fueron importados correctamente</p>
                 </Container>
               </div>
-          }
+            }
 
-          {hasUploadResponse && hasUploadErrors &&
+            {this.state.hasUploadResponse && this.state.hasUploadErrors &&
 
               <div>
                 <Container maxWidth="lg">
-                  <Card className={classes.root}>
-                    <CardHeader title="Alguno de los archivos contiene consumos con errores. Por favor, realice las correcciones correspondiente y vuelva a importarlo." />
-                  </Card>
+                  <h1>Alguno de los archivos contiene consumos con errores</h1>
+                  <em></em>
+                  <p>Por favor, realice las correcciones correspondiente y vuelva a importarlo</p>
                 </Container>
 
-                <TablaProceso data={uploadResponse}/>
+                <TablaProceso data={this.state.uploadResponse} />
+              </div>
+            }
 
-                <Button component={Link} to="/cargarVentas" variant="contained" color="default" fullWidth="true" className={classes.nextLevelButton} onClick={clearState}>Volver a Cargar ventas</Button>
+            {this.state.hasUploadResponse &&
 
-              </div> 
-          }
+              <VolverButton variant="contained" color="default" fullWidth onClick={this.clearState}>Volver a Cargar ventas</VolverButton>
+            }
 
-        </div>
-      </Layout>
-    </div>
-  );
+          </div>
+        </Layout>
+      </div>
+    );
+
+  }
 }
 
+export default (CargarVentas);

@@ -50,11 +50,11 @@ export default function TablaProceso(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.data.consumos.map((consumo) => (
+          {props.data.consumos.map((consumo, index) => (
 
             !consumo.success &&
 
-            <StyledTableRow  key={consumo.codigo_barra + consumo.fecha}>
+            <StyledTableRow  key={index}>
               <StyledTableCell component="th" scope="row" align="center">{consumo.codigo_barra}</StyledTableCell>
               <StyledTableCell align="center">{consumo.fecha}</StyledTableCell>
               <StyledTableCell>{consumo.message}</StyledTableCell>
