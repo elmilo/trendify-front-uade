@@ -58,6 +58,17 @@ export class CargarVentas extends React.Component {
     this.clearState = this.clearState.bind(this);
   }
 
+  formatDate = function(dateInt){
+
+    var date = new Date((dateInt - (25567 + 1))*86400*1000);
+
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+
+    return day + "/" + month + "/" + year;
+  }
+
   onDropFile = function (file) {
 
     this.setState(prevState => ({
@@ -82,14 +93,14 @@ export class CargarVentas extends React.Component {
         return {
           codigo_barra: row.__EMPTY_1,
           ventas: row.__EMPTY_2,
-          fecha: row.__EMPTY_3,
+          fecha: this.formatDate(row.__EMPTY_3),
           stock: row.__EMPTY_4
         };
       });
 
       this.setState(prevState => ({
         ...prevState,
-        consumos: [...prevState.consumos, nuevosConsumos]
+        consumos: prevState.consumos.concat(nuevosConsumos)
       }));
     }
 
@@ -107,10 +118,12 @@ export class CargarVentas extends React.Component {
       isUploading: true
     }));
 
+    console.log(this.state.consumos);
+
     //Simula la pegada a la API
     setTimeout(() => {
 
-      var dUploadResponse = dataUploadResponseError; //Simula la respuesta enviada por la API
+      var dUploadResponse = dataUploadResponse; //Simula la respuesta enviada por la API
 
       this.setState(prevState => ({
         ...prevState,
@@ -120,6 +133,8 @@ export class CargarVentas extends React.Component {
         hasUploadErrors: dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success),
         files: []
       }));
+
+      console.log(this.state.dUploadResponse);
 
     }, 3000);
   }
@@ -181,7 +196,7 @@ export class CargarVentas extends React.Component {
                 <Container maxWidth="lg">
                   <h1>Alguno de los archivos contiene consumos con errores</h1>
                   <em></em>
-                  <p>Por favor, realice las correcciones correspondiente y vuelva a importarlo</p>
+                  <p>Por favor, realice las correcciones correspondientes y vuelva a importarlo</p>
                 </Container>
 
                 <TablaProceso data={this.state.uploadResponse} />
