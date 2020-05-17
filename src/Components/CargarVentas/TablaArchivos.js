@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: theme.palette.common.black,
+    backgroundColor: theme.palette.primary.dark,
     color: theme.palette.common.white,
   },
   body: {
@@ -28,7 +28,7 @@ const StyledTableRow = withStyles((theme) => ({
 
 const useStyles = makeStyles({
   tableContainer:{
-    margin: '20px 0'
+    margin: '20px 0 0 0'
   },
   table: {
     minWidth: 700
@@ -45,8 +45,7 @@ export default function CargarVentas(props) {
         <TableHead>
           <TableRow>
             <StyledTableCell>Archivo</StyledTableCell>
-            <StyledTableCell align="right">Tamaño (bytes)</StyledTableCell>
-            <StyledTableCell align="right">Registros</StyledTableCell>
+            <StyledTableCell align="right">Tamaño (KB)</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -55,8 +54,7 @@ export default function CargarVentas(props) {
               <StyledTableCell component="th" scope="row">
                 {file.path}
               </StyledTableCell>
-              <StyledTableCell align="right">{file.size}</StyledTableCell>
-              <StyledTableCell align="right">{8}</StyledTableCell>
+              <StyledTableCell align="right">{file.size / 1000}</StyledTableCell>
             </StyledTableRow >
           ))}
         </TableBody>
