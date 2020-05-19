@@ -93,7 +93,8 @@ export class CargarVentas extends React.Component {
         return {
           codigo_barra: row.__EMPTY_1,
           ventas: row.__EMPTY_2,
-          fecha: this.formatDate(row.__EMPTY_3),
+          fecha: row.__EMPTY_3,
+          //fecha: this.formatDate(row.__EMPTY_3),
           stock: row.__EMPTY_4
         };
       });
