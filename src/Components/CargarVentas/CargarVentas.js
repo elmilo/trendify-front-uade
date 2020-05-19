@@ -8,9 +8,9 @@ import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { styled } from '@material-ui/core/styles';
 import XLSX from 'xlsx/xlsx';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
-import dataUploadResponse from "../../Assets/dataUploadResponse";
-import dataUploadResponseError from "../../Assets/dataUploadResponseError";
+import { createConsumoMultiple } from '../../Axios/Axios';
 
 const ImportarButton = styled(Button)({
   'border-radius': '0.2rem !important',
@@ -58,9 +58,9 @@ export class CargarVentas extends React.Component {
     this.clearState = this.clearState.bind(this);
   }
 
-  formatDate = function(dateInt){
+  formatDate = function (dateInt) {
 
-    var date = new Date((dateInt - (25567 + 1))*86400*1000);
+    var date = new Date((dateInt - (25567 + 1)) * 86400 * 1000);
 
     var day = date.getDate();
     var month = date.getMonth() + 1;
@@ -118,25 +118,24 @@ export class CargarVentas extends React.Component {
       isUploading: true
     }));
 
-    console.log(this.state.consumos);
+    //console.log({"idCliente": "111", "consumos" :this.state.consumos});
+    //const response_api = 
 
-    //Simula la pegada a la API
-    setTimeout(() => {
+    createConsumoMultiple({ "idCliente": "111", "consumos": this.state.consumos })
+      .then((dUploadResponse) => {
 
-      var dUploadResponse = dataUploadResponse; //Simula la respuesta enviada por la API
+        this.setState(prevState => ({
+          ...prevState,
+          isUploading: false,
+          hasUploadResponse: true,
+          uploadResponse: dUploadResponse,
+          hasUploadErrors: dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success),
+          files: []
+        }));
 
-      this.setState(prevState => ({
-        ...prevState,
-        isUploading: false,
-        hasUploadResponse: true,
-        uploadResponse: dUploadResponse,
-        hasUploadErrors: dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success),
-        files: []
-      }));
+      });
 
-      console.log(this.state.dUploadResponse);
 
-    }, 3000);
   }
 
   clearState = function () {
@@ -182,22 +181,20 @@ export class CargarVentas extends React.Component {
 
             {this.state.hasUploadResponse && !this.state.hasUploadErrors &&
               <div>
-                <Container maxWidth="lg">
-                  <h1>Importación de archivos exitosa</h1>
-                  <em></em>
-                  <p>Todos los archivos fueron importados correctamente</p>
-                </Container>
+                <Alert severity="info">
+                  <AlertTitle>Importación exitosa</AlertTitle>
+                  El archivo fue <strong>importado correctamente</strong>
+                </Alert>
               </div>
             }
 
             {this.state.hasUploadResponse && this.state.hasUploadErrors &&
 
               <div>
-                <Container maxWidth="lg">
-                  <h1>Alguno de los archivos contiene consumos con errores</h1>
-                  <em></em>
-                  <p>Por favor, realice las correcciones correspondientes y vuelva a importarlo</p>
-                </Container>
+                <Alert severity="error">
+                  <AlertTitle textAlign='left'>El archivo contiene errores</AlertTitle>
+                  Por favor, realice las correcciones correspondientes en los siguientes consumos <strong>y vuelva a importarlo!</strong>
+                </Alert>
 
                 <TablaProceso data={this.state.uploadResponse} />
               </div>

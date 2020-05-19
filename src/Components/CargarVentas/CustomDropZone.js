@@ -45,7 +45,7 @@ export default function CustomDropZone(props) {
     isDragActive,
     isDragAccept,
     isDragReject
-  } = useDropzone({ accept: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', noKeyboard: true, onDrop });
+  } = useDropzone({ accept: 'application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', multiple: false, noKeyboard: true, onDrop });
 
   const style = useMemo(() => ({
     ...baseStyle,
@@ -62,9 +62,9 @@ export default function CustomDropZone(props) {
     <div {...getRootProps({ style })}>
       <CloudUploadIcon color="primary" fontSize="large" />
       <input {...getInputProps()} />
-      {isDragAccept && (<p>!Todos los archivos serán aceptados!</p>)}
-      {isDragReject && (<p>Algunos archivos no tienen el formato permitido.</p>)}
-      {!isDragActive && (<p>Arrastrá los archivos aquí, o bien haz click para seleccionarlos...</p>)}
+      {isDragAccept && (<p>¡El archivo será aceptado!</p>)}
+      {isDragReject && (<p>El archivo no tiene el formato permitido.</p>)}
+      {!isDragActive && (<p>Arrastra aquí el archivos, o bien haz click para seleccionarlo...</p>)}
       <p></p>
       <em>(Solo se aceptarán *.xls o bien *.xlsx)</em>
     </div>
