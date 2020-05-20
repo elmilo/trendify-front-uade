@@ -60,13 +60,18 @@ export class CargarVentas extends React.Component {
 
   formatDate = function (dateInt) {
 
-    var date = new Date((dateInt - (25567 + 1)) * 86400 * 1000);
+    if (!isNaN(dateInt)) {
 
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
+      var date = new Date((dateInt - (25567 + 1)) * 86400 * 1000);
 
-    return day + "/" + month + "/" + year;
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+
+      return day + "/" + month + "/" + year;
+    }
+
+    return dateInt;
   }
 
   onDropFile = function (file) {
@@ -93,8 +98,7 @@ export class CargarVentas extends React.Component {
         return {
           codigo_barra: row.__EMPTY_1,
           ventas: row.__EMPTY_2,
-          fecha: row.__EMPTY_3,
-          //fecha: this.formatDate(row.__EMPTY_3),
+          fecha: this.formatDate(row.__EMPTY_3),
           stock: row.__EMPTY_4
         };
       });
@@ -119,11 +123,19 @@ export class CargarVentas extends React.Component {
       isUploading: true
     }));
 
-    //console.log({"idCliente": "111", "consumos" :this.state.consumos});
-    //const response_api = 
+    var dUploadRequest = {
+      "idCliente": "111", 
+      "consumos" :this.state.consumos
+    };
+
+    console.log('Request');
+    console.log(dUploadRequest);
 
     createConsumoMultiple({ "idCliente": "111", "consumos": this.state.consumos })
       .then((dUploadResponse) => {
+
+        console.log('Response');
+        console.log(dUploadResponse);
 
         this.setState(prevState => ({
           ...prevState,
@@ -135,8 +147,6 @@ export class CargarVentas extends React.Component {
         }));
 
       });
-
-
   }
 
   clearState = function () {
@@ -183,8 +193,7 @@ export class CargarVentas extends React.Component {
             {this.state.hasUploadResponse && !this.state.hasUploadErrors &&
               <div>
                 <Alert severity="info">
-                  <AlertTitle>Importación exitosa</AlertTitle>
-                  El archivo fue <strong>importado correctamente</strong>
+                  <AlertTitle>Importación exitosa! El archivo fue <strong>importado correctamente.</strong></AlertTitle>
                 </Alert>
               </div>
             }
@@ -193,8 +202,7 @@ export class CargarVentas extends React.Component {
 
               <div>
                 <Alert severity="error">
-                  <AlertTitle textAlign='left'>El archivo contiene errores</AlertTitle>
-                  Por favor, realice las correcciones correspondientes en los siguientes consumos <strong>y vuelva a importarlo!</strong>
+                  <AlertTitle>El archivo contiene errores. Por favor, realice las correcciones correspondientes en los siguientes consumos <strong>y vuelva a importarlo!</strong></AlertTitle>
                 </Alert>
 
                 <TablaProceso data={this.state.uploadResponse} />
