@@ -12,9 +12,6 @@ import Layout from '../Layout/Layout.js'
 import TabNotificaciones from "./TabNotificaciones.js";
 import TabUsuarios from "./TabUsuarios.js";
 import TabPerfil from "./TabPerfil.js";
-import Button from '@material-ui/core/Button';
-import { styled } from '@material-ui/core/styles';
-import { Container } from "@material-ui/core";
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -40,19 +37,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ButtonContainer = styled(Container)({
-  padding: '0 15px 15px 15px',
-  textAlign: 'center'
-});
-
-const GuardarButton = styled(Button)({
-  'border-radius': '0.2rem !important',
-  '& span': {
-    padding: '5px !important',
-    fontSize: '18px'
-  }
-});
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -72,18 +56,20 @@ export default function Perfil() {
 
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [isSaving, setIsSaving] = React.useState(false);
 
   const handleChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex);
   };
 
-  var data = {
+  var dataMisDatos = {
     rol: "Administrador",
     nombre: "Perez, Camilo",
     comercio: "Minimercado bla bla..",
     email: "perez.camilo@gmail.com",
     tel: "1567845678",
+  }
+
+  var dataUsuarios = {
     usuarios: [{ 
       id: 1,
       nombre: 'Matías',
@@ -211,18 +197,14 @@ export default function Perfil() {
             </Tabs>
           </AppBar>
           <TabPanel value={tabIndex} index={0}>
-            <TabNotificaciones data={data} />
+            <TabNotificaciones data={dataMisDatos} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <TabUsuarios data={data} />
+            <TabUsuarios data={dataUsuarios} />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>
-            <TabPerfil data={data} />
+            <TabPerfil data={dataMisDatos} />
           </TabPanel>
-          <ButtonContainer maxWidth="lg">
-            {!isSaving && <GuardarButton variant="contained" color="secondary" fullWidth>Guardar</GuardarButton>}
-            {isSaving && <GuardarButton variant="contained" color="secondary" fullWidth disabled>Guardando...</GuardarButton>}
-          </ButtonContainer>
         </div>
       </Layout>
     </div>
