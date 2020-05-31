@@ -14,6 +14,7 @@ import TabUsuarios from "./TabUsuarios.js";
 import TabPerfil from "./TabPerfil.js";
 import dataGetMisDatosResponse from "../../Assets/dataGetMisDatosResponse";
 import dataListadoUsuariosResponse from "../../Assets/dataListadoUsuariosResponse";
+import dataListadoNotifiacionesResponse from "../../Assets/dataListadoNotificacionesResponse";
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -80,7 +81,7 @@ export default function Perfil() {
             </Tabs>
           </AppBar>
           <TabPanel value={tabIndex} index={0}>
-            <TabNotificaciones data={dataGetMisDatosResponse} />
+            <TabNotificaciones data={dataListadoNotifiacionesResponse} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
             <TabUsuarios data={dataListadoUsuariosResponse} />
