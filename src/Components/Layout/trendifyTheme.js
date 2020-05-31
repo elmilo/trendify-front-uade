@@ -15,18 +15,18 @@ const trendifyTheme = createMuiTheme({
     secondary: {
       main: '#0BCE64'
     },
-    error: {
-      main: '#E33E7F'
-    },
-    warning: {
-        main: '#FF5B64',
-      },
-    info: {
-        main: '#2064EC',
-      },
-    success: {
-      main: '#FF9F52'
-    }
+    // error: {
+    //   main: '#E33E7F'
+    // },
+    // warning: {
+    //     main: '#FF5B64',
+    //   },
+    // info: {
+    //     main: '#2064EC',
+    //   },
+    // success: {
+    //   main: '#FF9F52'
+    // }
   }
 });
 

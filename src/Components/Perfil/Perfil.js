@@ -12,6 +12,8 @@ import Layout from '../Layout/Layout.js'
 import TabNotificaciones from "./TabNotificaciones.js";
 import TabUsuarios from "./TabUsuarios.js";
 import TabPerfil from "./TabPerfil.js";
+import dataGetMisDatosResponse from "../../Assets/dataGetMisDatosResponse";
+import dataListadoUsuariosResponse from "../../Assets/dataListadoUsuariosResponse";
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -61,125 +63,6 @@ export default function Perfil() {
     setTabIndex(newTabIndex);
   };
 
-  var dataMisDatos = {
-    rol: "Administrador",
-    nombre: "Perez, Camilo",
-    comercio: "Minimercado bla bla..",
-    email: "perez.camilo@gmail.com",
-    tel: "1567845678",
-  }
-
-  var dataUsuarios = {
-    usuarios: [{ 
-      id: 1,
-      nombre: 'Matías',
-      apellido: 'Iglesias',
-      email: 'matiiglesias@uade.edu.ar',
-      tel: '1537808327',
-      id_rol: 2,
-      rol: 'Usuario'
-    },
-    { 
-      id: 2,
-      nombre: 'Emilio',
-      apellido: 'Amarillo',
-      email: 'eamarillo@uade.edu.ar',
-      tel: '1549582634',
-      id_rol: 1,
-      rol: 'Administrador'
-    },
-    { 
-      id: 3,
-      nombre: 'Matías',
-      apellido: 'Iglesias',
-      email: 'matiiglesias@uade.edu.ar',
-      tel: '1537808327',
-      id_rol: 2,
-      rol: 'Usuario'
-    },
-    { 
-      id: 4,
-      nombre: 'Emilio',
-      apellido: 'Amarillo',
-      email: 'eamarillo@uade.edu.ar',
-      tel: '1549582634',
-      id_rol: 1,
-      rol: 'Administrador'
-    },
-    { 
-      id: 5,
-      nombre: 'Matías',
-      apellido: 'Iglesias',
-      email: 'matiiglesias@uade.edu.ar',
-      tel: '1537808327',
-      id_rol: 2,
-      rol: 'Usuario'
-    },
-    { 
-      id: 6,
-      nombre: 'Emilio',
-      apellido: 'Amarillo',
-      email: 'eamarillo@uade.edu.ar',
-      tel: '1549582634',
-      id_rol: 1,
-      rol: 'Administrador'
-    },
-    { 
-      id: 7,
-      nombre: 'Matías',
-      apellido: 'Iglesias',
-      email: 'matiiglesias@uade.edu.ar',
-      tel: '1537808327',
-      id_rol: 2,
-      rol: 'Usuario'
-    },
-    { 
-      id: 8,
-      nombre: 'Emilio',
-      apellido: 'Amarillo',
-      email: 'eamarillo@uade.edu.ar',
-      tel: '1549582634',
-      id_rol: 1,
-      rol: 'Administrador'
-    },
-    { 
-      id: 9,
-      nombre: 'Matías',
-      apellido: 'Iglesias',
-      email: 'matiiglesias@uade.edu.ar',
-      tel: '1537808327',
-      id_rol: 2,
-      rol: 'Usuario'
-    },
-    { 
-      id: 10,
-      nombre: 'Emilio',
-      apellido: 'Amarillo',
-      email: 'eamarillo@uade.edu.ar',
-      tel: '1549582634',
-      id_rol: 1,
-      rol: 'Administrador'
-    },
-    { 
-      id: 11,
-      nombre: 'Matías',
-      apellido: 'Iglesias',
-      email: 'matiiglesias@uade.edu.ar',
-      tel: '1537808327',
-      id_rol: 2,
-      rol: 'Usuario'
-    },
-    { 
-      id: 12,
-      nombre: 'Emilio',
-      apellido: 'Amarillo',
-      email: 'eamarillo@uade.edu.ar',
-      tel: '1549582634',
-      id_rol: 1,
-      rol: 'Administrador'
-    }]
-  }
-
   return (
     <div>
       <Layout title="Perfil">
@@ -197,13 +80,13 @@ export default function Perfil() {
             </Tabs>
           </AppBar>
           <TabPanel value={tabIndex} index={0}>
-            <TabNotificaciones data={dataMisDatos} />
+            <TabNotificaciones data={dataGetMisDatosResponse} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <TabUsuarios data={dataUsuarios} />
+            <TabUsuarios data={dataListadoUsuariosResponse} />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>
-            <TabPerfil data={dataMisDatos} />
+            <TabPerfil misDatos={dataGetMisDatosResponse} />
           </TabPanel>
         </div>
       </Layout>

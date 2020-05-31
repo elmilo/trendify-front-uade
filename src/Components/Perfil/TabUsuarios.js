@@ -22,6 +22,7 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import ModalUsuario from "./Usuarios/ModalUsuario";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import MessageModal from '../Common/MessageModal';
 
 const ButtonNuevoContainer = styled(Container)({
   textAlign: 'right',
@@ -139,6 +140,12 @@ export default function TabUsuarios(props) {
     emailIsValid: true,
     telIsValid: true,
     id_RolIsValid: true,
+  });
+  const [messageModal, setMessageModal] = React.useState({
+    isOpen: false,
+    severity: "success", //success | error | warning | info
+      title: "¡Alta de usuario exitosa!",
+      message: "El usuario fue dado de alta correctamente."
   });
 
   const rowsPerPage = 5;
@@ -280,13 +287,27 @@ export default function TabUsuarios(props) {
 
       if (modalABM === 'A') {
         //Llamada a la API para dar de alta
+        console.log('Request ALTA Usuario:');
       } else if (modalABM === 'M') {
         //Llamada a la API para dar de editar
+        console.log('Request EDICION Usuario:');
       }
+
+      console.log(usuario);
 
       setTimeout(() => {
 
         setIsSaving(false);
+
+        setMessageModal({
+          isOpen: true,
+          severity: "success", //success | error | warning | info
+          title: modalABM === 'A' ? "¡Alta de usuario exitosa!" : "¡Edición de usuario exitosa!",
+          message: modalABM === 'A' ? "El usuario fue dado de alta correctamente." : "El usuario fue actualizado correctamente."
+        });
+
+        console.log('Response ALTA/EDICION Usuario:');
+        console.log(usuario);
 
         //LLamada a la API para recargar el listado de usuarios
 
@@ -298,17 +319,26 @@ export default function TabUsuarios(props) {
 
   const handleEliminar = () => {
 
+    console.log('Request BAJA Usuario:');
     console.log(usuario);
 
     setIsSaving(true);
 
-    if (modalABM === 'B') {
-      //Llamada a la API para dar de eliminar
-    }
+    //Llamada a la API para dar de eliminar
 
     setTimeout(() => {
 
       setIsSaving(false);
+
+      setMessageModal({
+        isOpen: true,
+        severity: "success", //success | error | warning | info
+        title: "¡Baja de usuario exitosa!",
+        message: "El usuario fue eliminado correctamente."
+      });
+
+      console.log('Response BAJA Usuario:');
+      console.log(usuario);
 
       //LLamada a la API para recargar el listado de usuarios
 
@@ -321,6 +351,15 @@ export default function TabUsuarios(props) {
     limpiarValidaciones();
     cerrarFormulario();
   };
+
+  const handleCerrarMessageModal = () => {
+    setMessageModal({
+      isOpen: false,
+      severity: "success", //success | error | warning | info
+      title: "¡Alta de usuario exitosa!",
+      message: "El usuario fue dado de alta correctamente."
+    });
+  }
 
   return (
     <div>
@@ -352,8 +391,8 @@ export default function TabUsuarios(props) {
                 <StyledTableCell>{usuario.email ? usuario.email : '-'}</StyledTableCell>
                 <StyledTableCell align="center">{usuario.tel ? usuario.tel : '-'}</StyledTableCell>
                 <StyledTableCell align="center">
-                  <EditIcon onClick={() => handleEdicion(usuario)} variant="contained" style={{margin: '0 5px', cursor: 'pointer'}} />
-                  <DeleteIcon onClick={() => handleBaja(usuario)} style={{margin: '0 5px', cursor: 'pointer'}} />
+                  <EditIcon onClick={() => handleEdicion(usuario)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
+                  <DeleteIcon onClick={() => handleBaja(usuario)} style={{ margin: '0 5px', cursor: 'pointer' }} />
                 </StyledTableCell>
               </StyledTableRow>
             ))}
@@ -398,6 +437,11 @@ export default function TabUsuarios(props) {
         handleEmailChange={handleEmailChange}
         handleTelefonoChange={handleTelefonoChange}
         handleRolChange={handleRolChange}
+      />
+
+      <MessageModal
+        messageModal={messageModal}
+        handleCerrar={handleCerrarMessageModal}
       />
 
     </div>
