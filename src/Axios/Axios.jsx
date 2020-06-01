@@ -17,6 +17,29 @@ export const createConsumoMultiple = (rawdata) => {
   });
 };
 
+export const createNuevoUsuario = (rawdata) => {
+  return axios
+    .post("/nuevoUsuario/", rawdata, config)
+    .then((response) => { 
+      return response.data;
+  });
+};
+
+export const createModificarUsuario = (rawdata) => {
+  return axios
+    .post("/modificarUsuario/", rawdata, config)
+    .then((response) => {
+      return response.data;
+  });
+};
+
+export const getListadoUsuarios = (idCliente) => {
+  return axios
+    .get("/listadoUsuarios/" + idCliente, null, config)
+    .then((response) => {
+      return response.data;
+  });
+};
 
 export const getTrendData = (parameter) => {
   /*return axios

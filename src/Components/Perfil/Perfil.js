@@ -13,8 +13,8 @@ import TabNotificaciones from "./TabNotificaciones.js";
 import TabUsuarios from "./TabUsuarios.js";
 import TabPerfil from "./TabPerfil.js";
 import dataGetMisDatosResponse from "../../Assets/dataGetMisDatosResponse";
-import dataListadoUsuariosResponse from "../../Assets/dataListadoUsuariosResponse";
 import dataListadoNotifiacionesResponse from "../../Assets/dataListadoNotificacionesResponse";
+import { getListadoUsuarios } from '../../Axios/Axios';
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -59,10 +59,30 @@ export default function Perfil() {
 
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [usuarios, setUsuarios] = React.useState(null);
 
   const handleChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex);
   };
+
+  const recargarListadoUsuarios = (onSuccessCallback, onErrorCallback) => {
+    getListadoUsuarios("111")
+      .then((dResponse) => {
+        setUsuarios(dResponse);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        console.log('Response Listado usuario:');
+        console.log(error);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
+  if (usuarios === null) {
+    recargarListadoUsuarios();
+  }
 
   return (
     <div>
@@ -84,7 +104,7 @@ export default function Perfil() {
             <TabNotificaciones data={dataListadoNotifiacionesResponse} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <TabUsuarios data={dataListadoUsuariosResponse} />
+            <TabUsuarios data={usuarios} recargarListadoUsuariosEvent={recargarListadoUsuarios} />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>
             <TabPerfil misDatos={dataGetMisDatosResponse} />

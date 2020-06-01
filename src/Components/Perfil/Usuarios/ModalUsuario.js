@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ddlRolOptions = [
-  { value: '2', text: 'Usuario' },
-  { value: '1', text: 'Administrador' }
+  { value: 'Usuario', text: 'Usuario' },
+  { value: 'Administrador', text: 'Administrador' }
 ]
 
 export default function ModalUsuario(props) {
@@ -93,12 +93,12 @@ export default function ModalUsuario(props) {
                       variant="outlined" 
                       className={classes.formControl} 
                       fullWidth
-                      error={!props.validations.id_RolIsValid}>
+                      error={!props.validations.rolIsValid}>
                       <InputLabel id="rol-ddl-lable">Rol</InputLabel>
                       <Select
                         labelId="rol-ddl-lable"
                         id="rol-ddl"
-                        value={props.usuario?.id_rol ?? '2'}
+                        value={props.usuario?.rol ?? 'Usuario'}
                         onChange={(e) => props.handleRolChange(e.target?.value)}
                         label="Rol">
 
@@ -108,7 +108,7 @@ export default function ModalUsuario(props) {
 
                       </Select>
 
-                      {!props.validations.id_RolIsValid && <FormHelperText>Debe seleccionar un Rol para el usuario.</FormHelperText> }
+                      {!props.validations.rolIsValid && <FormHelperText>Debe seleccionar un Rol para el usuario.</FormHelperText> }
 
                     </FormControl>
                   </Grid>

@@ -112,7 +112,7 @@ export default function TabNotificaciones(props) {
 
     setNotificacion(prevState => ({
       ...prevState,
-      id_medio_notifiacion: value
+      id_medio_notificacion: value
     }));
   };
 
