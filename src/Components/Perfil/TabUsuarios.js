@@ -17,8 +17,9 @@ import ModalUsuario from "./Usuarios/ModalUsuario";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MessageModal from '../Common/MessageModal';
-import { createNuevoUsuario, createModificarUsuario, getListadoUsuarios } from '../../Axios/Axios';
+import { createNuevoUsuario, createModificarUsuario } from '../../Axios/Axios';
 import PaginationActions from '../Common/PaginationActions';
+import LoadingData from '../Common/LoadingData';
 
 const ButtonNuevoContainer = styled(Container)({
   textAlign: 'right',
@@ -87,93 +88,44 @@ export default function TabUsuarios(props) {
     setPage(newPage);
   };
 
-  const handleAlta = () => {
+  const handleABM = (method, usuario) => {
     setIsModalOpen(true);
-    setModalABM('A');
-    setUsuario({ idCliente: '111', rol: 'Usuario' });
-  };
-
-  const handleEdicion = (usuario) => {
-    setIsModalOpen(true);
-    setModalABM('M');
+    setModalABM(method);
     setUsuario(usuario);
   };
 
-  const handleBaja = (usuario) => {
-    setIsModalOpen(true);
-    setModalABM('B');
-    setUsuario(usuario);
-  };
+  const handleAlta = () => { handleABM('A', { idCliente: '111', rol: 'Usuario' }) };
 
-  const handleRolChange = (value) => {
+  const handleEdicion = (usuario) => { handleABM('M', usuario) };
+
+  const handleBaja = (usuario) => { handleABM('B', usuario) };
+
+  const setFormInputChange = (prop, value, isValidProp) => {
 
     setValidations(prevState => ({
       ...prevState,
-      rolIsValid: true
+      [isValidProp]: true
     }));
 
     setUsuario(prevState => ({
       ...prevState,
-      rol: value
-    }));
-  };
-
-  const handleNombreChange = (value) => {
-
-    setValidations(prevState => ({
-      ...prevState,
-      nombreIsValid: true
-    }));
-
-    setUsuario(prevState => ({
-      ...prevState,
-      nombre: value
+      [prop]: value
     }));
   }
 
-  const handleApellidoChange = (value) => {
+  const handleRolChange = (value) => { setFormInputChange('rol', value, 'rolIsValid') };
 
-    setValidations(prevState => ({
-      ...prevState,
-      apellidoIsValid: true
-    }));
+  const handleNombreChange = (value) => { setFormInputChange('nombre', value, 'nombreIsValid') };
 
-    setUsuario(prevState => ({
-      ...prevState,
-      apellido: value
-    }));
-  }
+  const handleApellidoChange = (value) => { setFormInputChange('apellido', value, 'apellidoIsValid') };
 
-  const handleEmailChange = (value) => {
+  const handleEmailChange = (value) => { setFormInputChange('email', value, 'emailIsValid') };
 
-    setValidations(prevState => ({
-      ...prevState,
-      emailIsValid: true
-    }));
-
-    setUsuario(prevState => ({
-      ...prevState,
-      email: value
-    }));
-  }
-
-  const handleTelefonoChange = (value) => {
-
-    setValidations(prevState => ({
-      ...prevState,
-      telIsValid: true
-    }));
-
-    setUsuario(prevState => ({
-      ...prevState,
-      tel: value
-    }));
-  }
+  const handleTelefonoChange = (value) => { setFormInputChange('tel', value, 'telIsValid') };
 
   const cerrarFormulario = () => {
     setUsuario(null);
     setIsModalOpen(false);
-    setModalABM('A');
   }
 
   const limpiarValidaciones = () => {
@@ -232,13 +184,13 @@ export default function TabUsuarios(props) {
 
   const onGuardarResponseOk = (response) => {
 
-    console.log('Response ' + (modalABM === 'A' ? + 'ALTA' : 'EDICIÓN') + ' Usuario:');
+    console.log('Response ' + (modalABM === 'A' ? 'ALTA' : 'EDICIÓN') + ' Usuario:');
     console.log(response);
 
     setMessageModal({
       isOpen: true,
       severity: "success",
-      title: '¡' + (modalABM === 'A' ? + 'Alta' : 'Edición') + ' de usuario exitosa!',
+      title: '¡' + (modalABM === 'A' ? 'Alta' : 'Edición') + ' de usuario exitosa!',
       message: modalABM === 'A' ? "El usuario fue dado de alta correctamente." : "El usuario fue actualizado correctamente."
     });
 
@@ -257,8 +209,8 @@ export default function TabUsuarios(props) {
     setMessageModal({
       isOpen: true,
       severity: "error",
-      title: (modalABM === 'A' ? + 'Alta' : 'Edición') + " de usuario errónea :(",
-      message: "Oops! Ocurrió un error al " + (modalABM === 'A' ? + 'dar de alta' : 'editar') + " el usuario."
+      title: (modalABM === 'A' ? 'Alta' : 'Edición') + " de usuario errónea :(",
+      message: "Oops! Ocurrió un error al " + (modalABM === 'A' ? 'dar de alta' : 'editar') + " el usuario."
     });
   }
 
@@ -304,13 +256,13 @@ export default function TabUsuarios(props) {
   return (
     <div>
 
-      { props.data?.usuarios != null &&
-
-        <div>
-          <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-            Adm. de Usuarios
+      <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
+        Adm. de Usuarios
       </Typography>
 
+      {props.data?.usuarios != null && !props.isLoading &&
+
+        <div>
           <ButtonNuevoContainer maxWidth="lg">
             <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
           </ButtonNuevoContainer>
@@ -390,6 +342,8 @@ export default function TabUsuarios(props) {
         </div>
 
       }
+
+      {props.isLoading && <LoadingData message="Aguarde por favor..."/>}
 
     </div>
   );

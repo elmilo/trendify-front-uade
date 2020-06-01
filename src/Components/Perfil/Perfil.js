@@ -12,9 +12,7 @@ import Layout from '../Layout/Layout.js'
 import TabNotificaciones from "./TabNotificaciones.js";
 import TabUsuarios from "./TabUsuarios.js";
 import TabPerfil from "./TabPerfil.js";
-import dataGetMisDatosResponse from "../../Assets/dataGetMisDatosResponse";
-import dataListadoNotifiacionesResponse from "../../Assets/dataListadoNotificacionesResponse";
-import { getListadoUsuarios } from '../../Axios/Axios';
+import { getListadoUsuarios, getListadoNotificaciones, getUsuario } from '../../Axios/Axios';
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -59,29 +57,87 @@ export default function Perfil() {
 
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [isLoadingNotificaciones, setIsLoadingNotificaciones] = React.useState(false);
+  const [isLoadingUsuarios, setIsLoadingUsuarios] = React.useState(false);
+  const [isLoadingMisDatos, setIsLoadingMisDatos] = React.useState(false);
+  const [notificaciones, setNotificaciones] = React.useState(null);
   const [usuarios, setUsuarios] = React.useState(null);
+  const [misDatos, setMisDatos] = React.useState(null);
 
   const handleChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex);
   };
 
   const recargarListadoUsuarios = (onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingUsuarios(true);
+
     getListadoUsuarios("111")
       .then((dResponse) => {
         setUsuarios(dResponse);
+        setIsLoadingUsuarios(false);
         if (onSuccessCallback)
           onSuccessCallback();
       })
       .catch(error => {
         console.log('Response Listado usuario:');
         console.log(error);
+        setIsLoadingUsuarios(false);
         if (onErrorCallback)
           onErrorCallback();
       });
   }
 
-  if (usuarios === null) {
+  const recargarListadoNotificaciones = (onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingNotificaciones(true);
+
+    getListadoNotificaciones("111")
+      .then((response) => {
+        setNotificaciones(response);
+        setIsLoadingNotificaciones(false);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        console.log('Response Listado notificaciones:');
+        console.log(error);
+        setIsLoadingNotificaciones(false);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
+  const recargarMisDatos = (onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingMisDatos(true);
+
+    getUsuario("111")
+      .then((response) => {
+        setMisDatos(response);
+        setIsLoadingMisDatos(false);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        console.log('Response Mis datos:');
+        console.log(error);
+        setIsLoadingMisDatos(false);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
+  if (usuarios === null && !isLoadingUsuarios) {
     recargarListadoUsuarios();
+  }
+
+  if (notificaciones === null && !isLoadingNotificaciones) {
+    recargarListadoNotificaciones();
+  }
+
+  if (misDatos === null && !isLoadingMisDatos) {
+    recargarMisDatos();
   }
 
   return (
@@ -101,13 +157,13 @@ export default function Perfil() {
             </Tabs>
           </AppBar>
           <TabPanel value={tabIndex} index={0}>
-            <TabNotificaciones data={dataListadoNotifiacionesResponse} />
+            <TabNotificaciones data={notificaciones} isLoading={isLoadingNotificaciones} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <TabUsuarios data={usuarios} recargarListadoUsuariosEvent={recargarListadoUsuarios} />
+            <TabUsuarios data={usuarios} isLoading={isLoadingUsuarios} recargarListadoUsuariosEvent={recargarListadoUsuarios} />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>
-            <TabPerfil misDatos={dataGetMisDatosResponse} />
+            <TabPerfil data={misDatos} isLoading={isLoadingMisDatos} recargarMisDatosEvent={recargarMisDatos} />
           </TabPanel>
         </div>
       </Layout>

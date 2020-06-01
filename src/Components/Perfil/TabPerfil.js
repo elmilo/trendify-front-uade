@@ -7,6 +7,8 @@ import { styled } from '@material-ui/core/styles';
 import { Container } from "@material-ui/core";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MessageModal from '../Common/MessageModal';
+import LoadingData from '../Common/LoadingData';
+import { createModificarUsuario } from '../../Axios/Axios';
 
 const ButtonContainer = styled(Container)({
   textAlign: 'center',
@@ -24,7 +26,7 @@ const GuardarButton = styled(Button)({
 
 export default function TabPerfil(props) {
 
-  const [misDatos, setMisDatos] = React.useState(props.misDatos);
+  const [misDatos, setMisDatos] = React.useState(props.data);
   const [isSaving, setIsSaving] = React.useState(false);
   const [validations, setValidations] = React.useState({
     emailIsValid: true,
@@ -38,31 +40,22 @@ export default function TabPerfil(props) {
     message: "Los datos del usuario fueron actualizados correctamente"
   });
 
-  const handleEmailChange = (value) => {
+  const setFormInputChange = (prop, value, isValidProp) => {
 
     setValidations(prevState => ({
       ...prevState,
-      emailIsValid: true
+      [isValidProp]: true
     }));
 
     setMisDatos(prevState => ({
       ...prevState,
-      email: value
+      [prop]: value
     }));
   }
 
-  const handleTelefonoChange = (value) => {
+  const handleEmailChange = (value) => { setFormInputChange('email', value, 'emailIsValid') };
 
-    setValidations(prevState => ({
-      ...prevState,
-      telIsValid: true
-    }));
-
-    setMisDatos(prevState => ({
-      ...prevState,
-      tel: value
-    }));
-  }
+  const handleTelefonoChange = (value) => { setFormInputChange('tel', value, 'telIsValid') };
 
   const limpiarValidaciones = () => {
     setValidations({
@@ -73,9 +66,15 @@ export default function TabPerfil(props) {
 
   const handleGuardar = () => {
 
+    if (!misDatos?.hasOwnProperty('email'))
+      handleEmailChange();
+
+    if (!misDatos?.hasOwnProperty('tel'))
+      handleTelefonoChange();
+
     //Se validan todas las propiedades
-    var emailIsValid = misDatos.email !== undefined && misDatos.email !== null && misDatos.email !== "";
-    var telIsValid = misDatos.tel !== undefined && misDatos.tel !== null && misDatos.tel !== "";
+    var emailIsValid = misDatos != null && misDatos.email !== undefined && misDatos.email !== null && misDatos.email !== "";
+    var telIsValid = misDatos != null && misDatos.tel !== undefined && misDatos.tel !== null && misDatos.tel !== "";
 
     //Si hay alguna propiedad invalida se actualiza el estado con la validación de cada propiedad
     if (!emailIsValid || !telIsValid) {
@@ -86,45 +85,62 @@ export default function TabPerfil(props) {
         telIsValid: telIsValid
       }));
 
-      //Si la validación es correcta (ó si es una Baja) se llama al método correspondiente de la API
     } else {
 
       setIsSaving(true);
 
+      var request = { ...misDatos, 
+        idUsuario: props.data.idUsuario,
+        nombre: props.data.nombre,
+        apellido: props.data.apellido,
+        pass: props.data.pass,
+        rol: props.data.rol
+      }
+
       console.log('Request GUARDAR MIS DATOS:');
-      console.log(misDatos);
+      console.log(request);
 
-      //Llamada a la API para dar guardar 'Mis Datos'
-
-      setTimeout(() => {
-
-        console.log('Response GUARDAR MIS DATOS:');
-        console.log(misDatos);
-        
-        setMessageModal({
-          isOpen: true,
-          severity: "success", //success | error | warning | info
-          title: "Actualización de Mis Datos Exitosa",
-          message: "Los datos del usuario fueron actualizados correctamente"
-        });
-
-        setIsSaving(false);
-
-        //LLamada a la API para recargar el listado de usuarios
-
-        limpiarValidaciones();
-      }, 2000);
+      createModificarUsuario(request)
+      .then((response) => { onGuardarResponseOk(response); })
+      .catch(error => { onGuardarResponseError(error) });
     }
   }
 
-  const handleCerrarMessageModal = () => {
+  const onGuardarResponseOk = (response) => {
+
+    console.log('Response GUARDAR MIS DATOS:');
+    console.log(response);
+
     setMessageModal({
-      isOpen: false,
-      severity: "success", //success | error | warning | info
-      title: "Actualización de Mis Datos Exitosa",
-      message: "Los datos del usuario fueron actualizados correctamente"
+      isOpen: true,
+          severity: "success", //success | error | warning | info
+          title: "Actualización de Mis Datos Exitosa",
+          message: "Los datos del usuario fueron actualizados correctamente"
+    });
+
+    props.recargarMisDatos(() => {
+      setIsSaving(false);
+      limpiarValidaciones();
+    }, () => { 
+      setIsSaving(false); 
+      limpiarValidaciones();
     });
   }
+
+  const onGuardarResponseError = (error) => {
+
+    console.log('Response GUARDAR MIS DATOS:');
+    console.log(error);
+
+    setMessageModal({
+      isOpen: true,
+      severity: "error",
+      title: 'Actualización de Mis Datos :(',
+      message: "Oops! Ocurrió un error al actualizar tus datos."
+    });
+  }
+
+  const handleCerrarMessageModal = () => { setMessageModal({ isOpen: false }); }
 
   return (
     <div>
@@ -133,72 +149,82 @@ export default function TabPerfil(props) {
         Mis datos
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item lg={8} xs={12}>
-          <TextField
-            id="nombre"
-            label="Nombre"
-            defaultValue={misDatos.nombre}
-            InputProps={{ readOnly: true }}
-            variant="outlined"
-            fullWidth
-            disabled />
-        </Grid>
-        <Grid item lg={4} xs={12}>
-          <TextField
-            id="rol"
-            label="Rol"
-            defaultValue={misDatos.rol}
-            InputProps={{ readOnly: true }}
-            variant="outlined"
-            fullWidth
-            disabled />
-        </Grid>
-        <Grid item lg={12} xs={12}>
-          <TextField
-            id="comercio"
-            label="Comercio"
-            defaultValue={misDatos.comercio}
-            InputProps={{ readOnly: true }}
-            variant="outlined"
-            fullWidth
-            disabled />
-        </Grid>
-        <Grid item lg={8} xs={12}>
-          <TextField
-            id="email"
-            label="Email"
-            defaultValue={misDatos.email}
-            variant="outlined"
-            fullWidth
-            onChange={(e) => handleEmailChange(e.target?.value)}
-            error={!validations.emailIsValid}
-            helperText={!validations.emailIsValid ? "El email es requerido" : ""}
-          />
-        </Grid>
-        <Grid item lg={4} xs={12}>
-          <TextField
-            id="tel"
-            label="Tel."
-            defaultValue={misDatos.tel}
-            variant="outlined"
-            fullWidth
-            onChange={(e) => handleTelefonoChange(e.target?.value)}
-            error={!validations.telIsValid}
-            helperText={!validations.telIsValid ? "El teléfono es requerido" : ""}
-          />
-        </Grid>
-      </Grid>
+      {props.data != null && !props.isLoading &&
 
-      <ButtonContainer maxWidth="lg">
-        {!isSaving && <GuardarButton variant="contained" color="secondary" fullWidth onClick={handleGuardar}>Guardar</GuardarButton>}
-        {isSaving && <GuardarButton variant="contained" color="secondary" fullWidth disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }}/> Guardando...</GuardarButton>}
-      </ButtonContainer>
+        <div>
 
-      <MessageModal
-        messageModal={messageModal}
-        handleCerrar={handleCerrarMessageModal}
-      />
+          <Grid container spacing={3}>
+            <Grid item lg={8} xs={12}>
+              <TextField
+                id="nombre"
+                label="Nombre"
+                defaultValue={props.data.apellido + ', ' + props.data.nombre}
+                InputProps={{ readOnly: true }}
+                variant="outlined"
+                fullWidth
+                disabled />
+            </Grid>
+            <Grid item lg={4} xs={12}>
+              <TextField
+                id="rol"
+                label="Rol"
+                defaultValue={props.data.rol}
+                InputProps={{ readOnly: true }}
+                variant="outlined"
+                fullWidth
+                disabled />
+            </Grid>
+            <Grid item lg={12} xs={12}>
+              <TextField
+                id="comercio"
+                label="Comercio"
+                defaultValue={props.data.comercio}
+                InputProps={{ readOnly: true }}
+                variant="outlined"
+                fullWidth
+                disabled />
+            </Grid>
+            <Grid item lg={8} xs={12}>
+              <TextField
+                id="email"
+                label="Email"
+                defaultValue={props.data.email}
+                variant="outlined"
+                fullWidth
+                onChange={(e) => handleEmailChange(e.target?.value)}
+                error={!validations.emailIsValid}
+                helperText={!validations.emailIsValid ? "El email es requerido" : ""}
+              />
+            </Grid>
+            <Grid item lg={4} xs={12}>
+              <TextField
+                id="tel"
+                label="Tel."
+                defaultValue={props.data.tel}
+                variant="outlined"
+                fullWidth
+                onChange={(e) => handleTelefonoChange(e.target?.value)}
+                error={!validations.telIsValid}
+                helperText={!validations.telIsValid ? "El teléfono es requerido" : ""}
+              />
+            </Grid>
+          </Grid>
+
+          <ButtonContainer maxWidth="lg">
+            {!isSaving && <GuardarButton variant="contained" color="secondary" fullWidth onClick={handleGuardar}>Guardar</GuardarButton>}
+            {isSaving && <GuardarButton variant="contained" color="secondary" fullWidth disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }} /> Guardando...</GuardarButton>}
+          </ButtonContainer>
+
+          <MessageModal
+            messageModal={messageModal}
+            handleCerrar={handleCerrarMessageModal}
+          />
+
+        </div>
+      }
+
+      {props.isLoading && <LoadingData message="Aguarde por favor..." />}
+
     </div>
   );
 }

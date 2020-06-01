@@ -1,8 +1,10 @@
 export default {
-    id_Usuario: 1,
+    idUsuario: 3,
     rol: "Administrador",
-    nombre: "Perez, Camilo",
+    nombre: "Camilo",
+    apellido: "Perez",
     comercio: "Minimercado bla bla..",
     email: "perez.camilo@gmail.com",
     tel: "1567845678",
+    pass: '123456'
 };
