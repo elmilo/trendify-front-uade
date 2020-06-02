@@ -68,7 +68,9 @@ export default function TabNotificaciones(props) {
   const [validations, setValidations] = React.useState({
       descripcionIsValid: true,
       id_CategoriaIsValid: true,
-      id_MedioNotificacionIsValid: true
+      id_MedioNotificacionIsValid: true,
+      id_criterioNotificacionIsValid: true,
+      OpcionCriterioPersonalizado: false
   });
   const [messageModal, setMessageModal] = React.useState({
     isOpen: false,
@@ -128,6 +130,34 @@ export default function TabNotificaciones(props) {
       id_categoria: value
     }));
   };
+
+  const handleCriterioNotificacionChange = (value) => {
+
+    setValidations(prevState => ({
+      ...prevState,
+      id_criterioNotificacionIsValid: true
+    }));
+
+    setNotificacion(prevState => ({
+      ...prevState,
+      id_criterioNotificacionElegido: value
+    }));
+  };
+
+  const handleOpcionCriterioPersonalizado = (value) => {
+    const valor_opcion = (value === 'criterio03');
+
+    setValidations(prevState => ({
+      ...prevState,
+      OpcionCriterioPersonalizado: valor_opcion
+    }));
+
+    /*setNotificacion(prevState => ({
+      ...prevState,
+      id_criterioNotificacion: value
+    }));*/
+  };
+
 
   const handleDescripcionChange = (value) => {
 
@@ -331,6 +361,8 @@ export default function TabNotificaciones(props) {
         handleCategoriaChange={handleCategoriaChange}
         handleMedioNotificacionChange={handleMedioNotificacionChange}
         handleDescripcionChange={handleDescripcionChange}
+        handleOpcionCriterioPersonalizado = {handleOpcionCriterioPersonalizado}
+        handleCriterioNotificacionChange  = {handleCriterioNotificacionChange}
       />
 
       <MessageModal

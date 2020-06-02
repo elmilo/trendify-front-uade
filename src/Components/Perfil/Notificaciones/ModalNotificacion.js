@@ -16,6 +16,10 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Select from '@material-ui/core/Select';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
 
 const useStyles = makeStyles((theme) => ({
   closeButton: {
@@ -36,6 +40,11 @@ const ddlCategoriaOptions = [
   { value: '1', text: 'Lácteos' },
   { value: '2', text: 'Limpieza' },
   { value: '3', text: 'Golosinas' },
+]
+
+const ddlModificadorCriterioPersonalizadoOptions = [
+  { value: '1', text: 'Mayor o igual' },
+  { value: '2', text: 'Menor o igual' }
 ]
 
 export default function ModalUsuario(props) {
@@ -130,6 +139,57 @@ export default function ModalUsuario(props) {
 
                     </FormControl>
                   </Grid>
+
+              <Grid item xl={12} lg={12} md={12} xs={12}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Criterios de notificación </FormLabel>
+                  <RadioGroup aria-label="criterios-noti" name="criterios"
+                    onChange={(e) => props.handleOpcionCriterioPersonalizado(e.target?.value)}
+
+                  >
+                    <FormControlLabel value="criterio01" control={<Radio />} label="Delta de 10% en los últimos 2 días, ventana de 15 días" />
+                    <FormControlLabel value="criterio02" control={<Radio />} label="Delta de 15% en los últimos 4 días, ventana de 20 días" />
+                    <FormControlLabel value="criterio03" control={<Radio />} label="Personalizada" />
+                  </RadioGroup>
+                </FormControl>
+                <form className={classes.root} noValidate autoComplete="off">
+
+
+                  <TextField
+                    disabled={!props.validations.OpcionCriterioPersonalizado}
+                    type="number"
+                    defaultValue="2"
+                    variant="outlined"
+                    id="standard-basic"
+                    label="Días de observación" />
+
+                  <Select
+                    labelId="modificador-criterio03-label"
+                    id="modificador-criterio03"
+                    disabled={!props.validations.OpcionCriterioPersonalizado}
+                    value={props.notificacion?.modificador_criterio03 ?? ''}
+                    onChange={(e) => props.handleCriterioNotificacionChange(e.target?.value)}
+                    label="CriterioPersonalizado"
+                    variant="outlined"
+                    value="1"
+                  >
+
+                    {ddlModificadorCriterioPersonalizadoOptions.map((modificador, index) => (
+                      <MenuItem key={"ddl-modificador-" + index} value={modificador.value}>{modificador.text}</MenuItem>
+                    ))}
+
+                  </Select>
+
+                  <TextField
+                    disabled={!props.validations.OpcionCriterioPersonalizado}
+                    id="Cantidad-basic"
+                    label="Cantidad de productos"
+                    variant="outlined"
+                    defaultValue="350"
+                    type="number" />
+                </form>
+              </Grid>
+
                 </Grid>
               }
               {props.modalABM === 'B' &&
@@ -149,3 +209,5 @@ export default function ModalUsuario(props) {
     </div>
   );
 }
+
+
