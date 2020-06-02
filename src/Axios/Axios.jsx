@@ -1,4 +1,6 @@
 import axios from "axios";
+import dataListadoNotifiacionesResponse from "../Assets/dataListadoNotificacionesResponse";
+import dataGetMisDatosResponse from "../Assets/dataGetMisDatosResponse";
 const TRENDIFY_ENDPOINT = "https://seminario-back.herokuapp.com/app/";
 
 let config = {
@@ -38,6 +40,22 @@ export const getListadoUsuarios = (idCliente) => {
     .get("/listadoUsuarios/" + idCliente, null, config)
     .then((response) => {
       return response.data;
+  });
+};
+
+export const getListadoNotificaciones = (idCliente) => {
+  return axios
+    .get("/listadoUsuarios/" + idCliente, null, config)
+    .then((response) => {
+      return dataListadoNotifiacionesResponse;
+  });
+};
+
+export const getUsuario = (idUsuario) => {
+  return axios
+    .get("/listadoUsuarios/" + idUsuario, null, config)
+    .then((response) => {
+      return dataGetMisDatosResponse;
   });
 };
 

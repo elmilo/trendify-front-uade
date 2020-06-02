@@ -18,6 +18,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MessageModal from '../Common/MessageModal';
 import PaginationActions from '../Common/PaginationActions';
+import LoadingData from '../Common/LoadingData';
 
 const ButtonNuevoContainer = styled(Container)({
   textAlign: 'right',
@@ -56,7 +57,7 @@ const useStyles = makeStyles({
 });
 
 export default function TabNotificaciones(props) {
-  
+
   const classes = useStyles();
 
   const [page, setPage] = React.useState(0);
@@ -75,13 +76,13 @@ export default function TabNotificaciones(props) {
   const [messageModal, setMessageModal] = React.useState({
     isOpen: false,
     severity: "success", //success | error | warning | info
-      title: "¡Alta de usuario exitosa!",
-      message: "El usuario fue dado de alta correctamente."
+    title: "¡Alta de usuario exitosa!",
+    message: "El usuario fue dado de alta correctamente."
   });
 
   const rowsPerPage = 5;
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, props.data.notificaciones.length - page * rowsPerPage);
-  var notificacionesPaginado = props.data.notificaciones.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const emptyRows = props.data?.notificaciones != null ? rowsPerPage - Math.min(rowsPerPage, props.data.notificaciones.length - page * rowsPerPage) : rowsPerPage;
+  var notificacionesPaginado = props.data?.notificaciones?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -291,84 +292,91 @@ export default function TabNotificaciones(props) {
     <div>
 
       <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-      Adm. de Notificaciones
+        Adm. de Notificaciones
       </Typography>
 
-      <ButtonNuevoContainer maxWidth="lg">
-        <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
-      </ButtonNuevoContainer>
+      {props.data?.notificaciones != null && !props.isLoading &&
 
-      <TableContainer component={Paper} className={classes.tableContainer}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Descripción</StyledTableCell>
-              <StyledTableCell>Categoría</StyledTableCell>
-              <StyledTableCell>M. Notificación</StyledTableCell>
-              <StyledTableCell>P. Notificación</StyledTableCell>
-              <StyledTableCell align="center">Acciones</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {notificacionesPaginado.map((notificacion) => (
-              <StyledTableRow key={notificacion.id}>
-              <StyledTableCell>{notificacion.descripcion ? notificacion.descripcion : '-'}</StyledTableCell>
-                <StyledTableCell>{notificacion.categoria ? notificacion.categoria : '-'}</StyledTableCell>
-                <StyledTableCell>{notificacion.medio_notifiacion ? notificacion.medio_notifiacion : '-'}</StyledTableCell>
-                <StyledTableCell>{notificacion.parametro_notifiacion ? notificacion.parametro_notifiacion : '-'}</StyledTableCell>
-                <StyledTableCell align="center">
-                  <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
-                  <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+        <div>
 
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={5} />
-              </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                colSpan={5}
-                count={props.data.notificaciones.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                SelectProps={{
-                  inputProps: { 'aria-label': 'Filas por página' },
-                  native: true,
-                }}
-                onChangePage={handleChangePage}
-                rowsPerPageOptions={[rowsPerPage]}
-                ActionsComponent={PaginationActions}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+          <ButtonNuevoContainer maxWidth="lg">
+            <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
+          </ButtonNuevoContainer>
 
-      <ModalNotificacion
-        isOpen={isModalOpen}
-        modalABM={modalABM}
-        isSaving={isSaving}
-        notificacion={notificacion}
-        validations={validations}
-        handleGuardar={handleGuardar}
-        handleEliminar={handleEliminar}
-        handleCerrar={handleCerrar}
-        handleCategoriaChange={handleCategoriaChange}
-        handleMedioNotificacionChange={handleMedioNotificacionChange}
-        handleDescripcionChange={handleDescripcionChange}
-        handleOpcionCriterioPersonalizado = {handleOpcionCriterioPersonalizado}
-        handleCriterioNotificacionChange  = {handleCriterioNotificacionChange}
-      />
+          <TableContainer component={Paper} className={classes.tableContainer}>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Descripción</StyledTableCell>
+                  <StyledTableCell>Categoría</StyledTableCell>
+                  <StyledTableCell>M. Notificación</StyledTableCell>
+                  <StyledTableCell>P. Notificación</StyledTableCell>
+                  <StyledTableCell align="center">Acciones</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {notificacionesPaginado.map((notificacion) => (
+                  <StyledTableRow key={notificacion.id}>
+                    <StyledTableCell>{notificacion.descripcion ? notificacion.descripcion : '-'}</StyledTableCell>
+                    <StyledTableCell>{notificacion.categoria ? notificacion.categoria : '-'}</StyledTableCell>
+                    <StyledTableCell>{notificacion.medio_notifiacion ? notificacion.medio_notifiacion : '-'}</StyledTableCell>
+                    <StyledTableCell>{notificacion.parametro_notifiacion ? notificacion.parametro_notifiacion : '-'}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
+                      <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
 
-      <MessageModal
-        messageModal={messageModal}
-        handleCerrar={handleCerrarMessageModal}
-      />
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={5} />
+                  </TableRow>
+                )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    colSpan={5}
+                    count={props.data.notificaciones.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    SelectProps={{
+                      inputProps: { 'aria-label': 'Filas por página' },
+                      native: true,
+                    }}
+                    onChangePage={handleChangePage}
+                    rowsPerPageOptions={[rowsPerPage]}
+                    ActionsComponent={PaginationActions}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
+
+          <ModalNotificacion
+            isOpen={isModalOpen}
+            modalABM={modalABM}
+            isSaving={isSaving}
+            notificacion={notificacion}
+            validations={validations}
+            handleGuardar={handleGuardar}
+            handleEliminar={handleEliminar}
+            handleCerrar={handleCerrar}
+            handleCategoriaChange={handleCategoriaChange}
+            handleMedioNotificacionChange={handleMedioNotificacionChange}
+            handleDescripcionChange={handleDescripcionChange}
+          />
+
+          <MessageModal
+            messageModal={messageModal}
+            handleCerrar={handleCerrarMessageModal}
+          />
+
+        </div>
+      }
+
+      {props.isLoading && <LoadingData message="Aguarde por favor..." />}
 
     </div>
   );
