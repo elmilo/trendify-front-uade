@@ -3,7 +3,7 @@ export default {
     rol: "Administrador",
     nombre: "Camilo",
     apellido: "Perez",
-    comercio: "Minimercado bla bla..",
+    cliente: { idCliente: '111', nombre: "Minimercado bla bla.." },
     email: "perez.camilo@gmail.com",
     tel: "1567845678",
     pass: '123456'

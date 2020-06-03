@@ -20,6 +20,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles((theme) => ({
   closeButton: {
@@ -36,7 +37,7 @@ const ddlMedioNotificacionOptions = [
 ]
 
 const ddlCategoriaOptions = [
-  { value: '', text: 'TODOS' },
+  { value: '0', text: 'Todas las categorías' },
   { value: '1', text: 'Lácteos' },
   { value: '2', text: 'Limpieza' },
   { value: '3', text: 'Golosinas' },
@@ -48,7 +49,7 @@ const ddlModificadorCriterioPersonalizadoOptions = [
 ]
 
 export default function ModalUsuario(props) {
-  
+
   const classes = useStyles();
 
   return (
@@ -78,7 +79,7 @@ export default function ModalUsuario(props) {
             <form className={classes.root} autoComplete="off">
               {(props.modalABM === 'A' || props.modalABM === 'M') &&
                 <Grid container spacing={3}>
-                <Grid item xl={12} lg={12} md={12} xs={12}>
+                  <Grid item xl={12} lg={12} md={12} xs={12}>
                     <TextField
                       id="descripcionABMNotificacion"
                       label="Descripcion"
@@ -92,9 +93,9 @@ export default function ModalUsuario(props) {
                     />
                   </Grid>
                   <Grid item xl={12} lg={12} md={12} xs={12}>
-                    <FormControl 
-                      variant="outlined" 
-                      className={classes.formControl} 
+                    <FormControl
+                      variant="outlined"
+                      className={classes.formControl}
                       fullWidth
                       error={!props.validations.id_CategoriaIsValid}>
                       <InputLabel id="categoria-ddl-lable">Categoría</InputLabel>
@@ -111,14 +112,14 @@ export default function ModalUsuario(props) {
 
                       </Select>
 
-                      {!props.validations.id_CategoriaIsValid && <FormHelperText>Debe seleccionar una Categoría.</FormHelperText> }
+                      {!props.validations.id_CategoriaIsValid && <FormHelperText>Debe seleccionar una Categoría.</FormHelperText>}
 
                     </FormControl>
                   </Grid>
-                <Grid item xl={12} lg={12} md={12} xs={12}>
-                    <FormControl 
-                      variant="outlined" 
-                      className={classes.formControl} 
+                  <Grid item xl={12} lg={12} md={12} xs={12}>
+                    <FormControl
+                      variant="outlined"
+                      className={classes.formControl}
                       fullWidth
                       error={!props.validations.id_MedioNotificacionIsValid}>
                       <InputLabel id="medio-notificacion-ddl-lable">Medio de Notificación</InputLabel>
@@ -135,61 +136,71 @@ export default function ModalUsuario(props) {
 
                       </Select>
 
-                      {!props.validations.id_MedioNotificacionIsValid && <FormHelperText>Debe seleccionar un Medio de Notificación.</FormHelperText> }
+                      {!props.validations.id_MedioNotificacionIsValid && <FormHelperText>Debe seleccionar un Medio de Notificación.</FormHelperText>}
 
                     </FormControl>
                   </Grid>
 
-              <Grid item xl={12} lg={12} md={12} xs={12}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Criterios de notificación </FormLabel>
-                  <RadioGroup aria-label="criterios-noti" name="criterios"
-                    onChange={(e) => props.handleOpcionCriterioPersonalizado(e.target?.value)}
+                  <Grid item xl={12} lg={12} md={12} xs={12}>
 
-                  >
-                    <FormControlLabel value="criterio01" control={<Radio />} label="Delta de 10% en los últimos 2 días, ventana de 15 días" />
-                    <FormControlLabel value="criterio02" control={<Radio />} label="Delta de 15% en los últimos 4 días, ventana de 20 días" />
-                    <FormControlLabel value="criterio03" control={<Radio />} label="Personalizada" />
-                  </RadioGroup>
-                </FormControl>
-                <form className={classes.root} noValidate autoComplete="off">
+                    <FormControl component="fieldset" style={{ margin: '10px 0 20px 0' }}>
+                      <FormLabel component="legend">Criterios de notificación </FormLabel>
+                      <RadioGroup aria-label="criterios-noti" name="criterios" onChange={(e) => props.handleCriterioNotificacionChange(e.target?.value)} value={props.notificacion?.id_criterioNotificacion ?? 'criterio01'}>
+                        <Tooltip title="Se notificará si el promedio de las ventas de los últimos 4 días superó o disminuyó más de un 10% sobre el promedio de los últimos 15 días." placement="right">
+                          <FormControlLabel value="criterio01" control={<Radio />} label="Delta de 10% en los últimos 2 días, ventana de 15 días" />
+                        </Tooltip>
+                        <Tooltip title="Se notificará si el promedio de las ventas de los últimos 4 días superó o disminuyó más de un 15% sobre el promedio de los últimos 20 días." placement="right">
+                          <FormControlLabel value="criterio02" control={<Radio />} label="Delta de 15% en los últimos 4 días, ventana de 20 días" />
+                        </Tooltip>
+                        <Tooltip title="Se notificará si la cantidad de productos vendidos (en última carga) es 'Mayor', 'Mayor o igual', 'Menor' ó 'Menor igual' a la cantidad de productos especificada." placement="right">
+                          <FormControlLabel value="criterio03" control={<Radio />} label="Personalizada" />
+                        </Tooltip>
+                      </RadioGroup>
+                    </FormControl>
+                    <form className={classes.root} noValidate autoComplete="off" hidden={!props.validations.esCriterioPersonalizado}>
 
+                      <Grid container spacing={3}>
+                        <Grid item xl={4} lg={4} md={12} xs={12}>
 
-                  <TextField
-                    disabled={!props.validations.OpcionCriterioPersonalizado}
-                    type="number"
-                    defaultValue="2"
-                    variant="outlined"
-                    id="standard-basic"
-                    label="Días de observación" />
+                          <TextField
+                            type="number"
+                            defaultValue="2"
+                            value={props.notificacion?.diasObservacion_criterio03 ?? '2'}
+                            variant="outlined"
+                            id="standard-basic"
+                            label="Días de observación" />
 
-                  <Select
-                    labelId="modificador-criterio03-label"
-                    id="modificador-criterio03"
-                    disabled={!props.validations.OpcionCriterioPersonalizado}
-                    value={props.notificacion?.modificador_criterio03 ?? ''}
-                    onChange={(e) => props.handleCriterioNotificacionChange(e.target?.value)}
-                    label="CriterioPersonalizado"
-                    variant="outlined"
-                    value="1"
-                  >
+                        </Grid>
 
-                    {ddlModificadorCriterioPersonalizadoOptions.map((modificador, index) => (
-                      <MenuItem key={"ddl-modificador-" + index} value={modificador.value}>{modificador.text}</MenuItem>
-                    ))}
+                        <Grid item xl={4} lg={4} md={12} xs={12}>
+                          <Select
+                            labelId="modificador-criterio03-label"
+                            id="modificador-criterio03"
+                            value={props.notificacion?.modificador_criterio03 ?? '1'}
+                            onChange={(e) => props.handleModificador(e.target?.value)}
+                            label="Criterio Personalizado"
+                            variant="outlined"
+                            fullWidth>
 
-                  </Select>
+                            {ddlModificadorCriterioPersonalizadoOptions.map((modificador, index) => (
+                              <MenuItem key={"ddl-modificador-" + index} value={modificador.value}>{modificador.text}</MenuItem>
+                            ))}
 
-                  <TextField
-                    disabled={!props.validations.OpcionCriterioPersonalizado}
-                    id="Cantidad-basic"
-                    label="Cantidad de productos"
-                    variant="outlined"
-                    defaultValue="350"
-                    type="number" />
-                </form>
-              </Grid>
+                          </Select>
+                        </Grid>
 
+                        <Grid item xl={4} lg={4} md={12} xs={12}>
+                          <TextField
+                            id="Cantidad-basic"
+                            label="Cantidad de productos"
+                            variant="outlined"
+                            defaultValue="350"
+                            value={props.notificacion?.cantProductos_criterio03 ?? '350'}
+                            type="number" />
+                        </Grid>
+                      </Grid>
+                    </form>
+                  </Grid>
                 </Grid>
               }
               {props.modalABM === 'B' &&
@@ -197,10 +208,10 @@ export default function ModalUsuario(props) {
             </form>
           </DialogContent>
           <DialogActions>
-            { props.modalABM !== 'B' && !props.isSaving && <Button variant="contained" color="primary" onClick={ props.handleGuardar }>Guardar</Button> }
-            { props.modalABM !== 'B' && props.isSaving && <Button variant="contained" color="default" disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }}/>   Guardando...</Button> }
-            { props.modalABM === 'B' && !props.isSaving && <Button variant="contained" color="default" onClick={ props.handleEliminar }>Eliminar</Button> }
-            { props.modalABM === 'B' && props.isSaving && <Button variant="contained" color="default" disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }}/>   Eliminando...</Button> }
+            {props.modalABM !== 'B' && !props.isSaving && <Button variant="contained" color="primary" onClick={props.handleGuardar}>Guardar</Button>}
+            {props.modalABM !== 'B' && props.isSaving && <Button variant="contained" color="default" disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }} />   Guardando...</Button>}
+            {props.modalABM === 'B' && !props.isSaving && <Button variant="contained" color="default" onClick={props.handleEliminar}>Eliminar</Button>}
+            {props.modalABM === 'B' && props.isSaving && <Button variant="contained" color="default" disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }} />   Eliminando...</Button>}
           </DialogActions>
         </Dialog>
 

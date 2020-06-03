@@ -71,12 +71,15 @@ export default function TabNotificaciones(props) {
       id_CategoriaIsValid: true,
       id_MedioNotificacionIsValid: true,
       id_criterioNotificacionIsValid: true,
-      OpcionCriterioPersonalizado: false
+      diasObservacionIsValid: true,
+      modificadorIsValid: true,
+      cantProductosIsValid: true,
+      esCriterioPersonalizado: false
   });
   const [messageModal, setMessageModal] = React.useState({
     isOpen: false,
     severity: "success", //success | error | warning | info
-    title: "¡Alta de usuario exitosa!",
+    title: " de usuario exitosa!",
     message: "El usuario fue dado de alta correctamente."
   });
 
@@ -88,102 +91,75 @@ export default function TabNotificaciones(props) {
     setPage(newPage);
   };
 
-  const handleAlta = () => {
+  const handleABM = (method, notificacion) => {
     setIsModalOpen(true);
-    setModalABM('A');
-    setNotificacion({ id_Usuario: 1 });
-  };
-
-  const handleEdicion = (notificacion) => {
-    setIsModalOpen(true);
-    setModalABM('M');
+    setModalABM(method);
     setNotificacion(notificacion);
   };
 
-  const handleBaja = (notificacion) => {
-    setIsModalOpen(true);
-    setModalABM('B');
-    setNotificacion(notificacion);
-  };
+  const handleAlta = () => { handleABM('A', { id_Usuario: 1, id_criterioNotificacion: 'criterio01' }); }
 
-  const handleMedioNotificacionChange = (value) => {
+  const handleEdicion = (notificacion) => { 
+    handleABM('M', notificacion);
 
     setValidations(prevState => ({
       ...prevState,
-      id_MedioNotifiacionIsValid: true
-    }));
-
-    setNotificacion(prevState => ({
-      ...prevState,
-      id_medio_notificacion: value
-    }));
-  };
-
-  const handleCategoriaChange = (value) => {
-
-    setValidations(prevState => ({
-      ...prevState,
-      id_CategoriaIsValid: true
-    }));
-
-    setNotificacion(prevState => ({
-      ...prevState,
-      id_categoria: value
-    }));
-  };
-
-  const handleCriterioNotificacionChange = (value) => {
-
-    setValidations(prevState => ({
-      ...prevState,
-      id_criterioNotificacionIsValid: true
-    }));
-
-    setNotificacion(prevState => ({
-      ...prevState,
-      id_criterioNotificacionElegido: value
-    }));
-  };
-
-  const handleOpcionCriterioPersonalizado = (value) => {
-    const valor_opcion = (value === 'criterio03');
-
-    setValidations(prevState => ({
-      ...prevState,
-      OpcionCriterioPersonalizado: valor_opcion
-    }));
-
-    /*setNotificacion(prevState => ({
-      ...prevState,
-      id_criterioNotificacion: value
-    }));*/
-  };
-
-
-  const handleDescripcionChange = (value) => {
-
-    setValidations(prevState => ({
-      ...prevState,
-      descripcionIsValid: true
-    }));
-
-    setNotificacion(prevState => ({
-      ...prevState,
-      descripcion: value
+      esCriterioPersonalizado: notificacion.id_criterioNotificacion === 'criterio03'
     }));
   }
+
+  const handleBaja = (notificacion) => { handleABM('B', notificacion); }
+
+  const setFormInputChange = (prop, value, isValidProp) => {
+
+    setValidations(prevState => ({
+      ...prevState,
+      [isValidProp]: true
+    }));
+
+    setNotificacion(prevState => ({
+      ...prevState,
+      [prop]: value
+    }));
+  }
+
+  const handleMedioNotificacionChange = (value) => { setFormInputChange('id_medio_notificacion', value, 'id_MedioNotifiacionIsValid'); }
+
+  const handleCategoriaChange = (value) => { setFormInputChange('id_categoria', value, 'id_CategoriaIsValid'); }
+
+  const handleCriterioNotificacionChange = (value) => { 
+    
+    setFormInputChange('id_criterioNotificacion', value, 'id_criterioNotificacionIsValid'); 
+
+    setValidations(prevState => ({
+      ...prevState,
+      esCriterioPersonalizado: value === 'criterio03'
+    }));
+  }
+
+  const handleDiasObservacion = (value) => { setFormInputChange('diasObservacion_criterio03', value, 'diasObservacionIsValid'); }
+
+  const handleModificador = (value) => { setFormInputChange('modificador_criterio03', value, 'modificadorIsValid'); }
+
+  const handleCantProductos = (value) => { setFormInputChange('cantProductos_criterio03', value, 'cantProductosIsValid'); }
+
+  const handleDescripcionChange = (value) => { setFormInputChange('descripcion', value, 'descripcionIsValid'); }
 
   const cerrarFormulario = () => {
     setNotificacion(null);
     setIsModalOpen(false);
-    setModalABM('A');
   }
 
   const limpiarValidaciones = () => {
     setValidations({
       descripcionIsValid: true,
       id_CategoriaIsValid: true,
-      id_MedioNotificacionIsValid: true
+      id_MedioNotificacionIsValid: true,
+      id_criterioNotificacionIsValid: true,
+      diasObservacionIsValid: true,
+      modificadorIsValid: true,
+      cantProductosIsValid: true,
+      esCriterioPersonalizado: false
     });
   }
 
@@ -195,15 +171,20 @@ export default function TabNotificaciones(props) {
     var descripcionIsValid = notificacion.descripcion !== undefined && notificacion.descripcion !== null && notificacion.descripcion !== "";
     var id_CategoriaIsValid = notificacion.id_categoria !== undefined && notificacion.id_categoria !== null && notificacion.id_categoria !== "";
     var id_MedioNotificacionIsValid = notificacion.id_medio_notificacion !== undefined && notificacion.id_medio_notificacion !== null && notificacion.id_medio_notificacion !== "";
+    var id_criterioNotificacionIsValid = notificacion.id_criterioNotificacion !== undefined && notificacion.id_criterioNotificacion !== null && notificacion.id_criterioNotificacion !== "";
 
     //Si hay alguna propiedad invalida se actualiza el estado con la validación de cada propiedad
-    if (!descripcionIsValid || !id_CategoriaIsValid || !id_MedioNotificacionIsValid) {
+    if (!descripcionIsValid || !id_CategoriaIsValid || !id_MedioNotificacionIsValid || !id_criterioNotificacionIsValid) {
 
       setValidations(prevState => ({
         ...prevState,
         descripcionIsValid: descripcionIsValid,
         id_CategoriaIsValid: id_CategoriaIsValid,
         id_MedioNotificacionIsValid: id_MedioNotificacionIsValid,
+        id_criterioNotificacionIsValid: id_criterioNotificacionIsValid,
+        diasObservacionIsValid: true,
+        modificadorIsValid: true,
+        cantProductosIsValid: true
       }));
 
     } else {
@@ -229,7 +210,7 @@ export default function TabNotificaciones(props) {
         setMessageModal({
           isOpen: true,
           severity: "success", //success | error | warning | info
-          title: modalABM === 'A' ? "¡Alta de notificacion exitosa!" : "¡Edición de usuario exitosa!",
+          title: modalABM === 'A' ? "¡Alta de notificacion exitosa!" : "¡Edición de notificacion exitosa!",
           message: modalABM === 'A' ? "La configuración  de notificaciones fue dada de alta correctamente." : "La configuración de notificaciones fue actualizada correctamente."
         });
 
@@ -279,25 +260,18 @@ export default function TabNotificaciones(props) {
     cerrarFormulario();
   };
 
-  const handleCerrarMessageModal = () => {
-    setMessageModal({
-      isOpen: false,
-      severity: "success", //success | error | warning | info
-      title: "¡Alta de usuario exitosa!",
-      message: "El usuario fue dado de alta correctamente."
-    });
-  }
+  const handleCerrarMessageModal = () => { setMessageModal({ isOpen: false }); }
 
   return (
     <div>
 
-      <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-        Adm. de Notificaciones
-      </Typography>
-
       {props.data?.notificaciones != null && !props.isLoading &&
 
         <div>
+
+        <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
+          Adm. de Notificaciones
+        </Typography>
 
           <ButtonNuevoContainer maxWidth="lg">
             <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
@@ -309,8 +283,8 @@ export default function TabNotificaciones(props) {
                 <TableRow>
                   <StyledTableCell>Descripción</StyledTableCell>
                   <StyledTableCell>Categoría</StyledTableCell>
-                  <StyledTableCell>M. Notificación</StyledTableCell>
-                  <StyledTableCell>P. Notificación</StyledTableCell>
+                  <StyledTableCell>Medio</StyledTableCell>
+                  <StyledTableCell>Criterio</StyledTableCell>
                   <StyledTableCell align="center">Acciones</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -319,8 +293,8 @@ export default function TabNotificaciones(props) {
                   <StyledTableRow key={notificacion.id}>
                     <StyledTableCell>{notificacion.descripcion ? notificacion.descripcion : '-'}</StyledTableCell>
                     <StyledTableCell>{notificacion.categoria ? notificacion.categoria : '-'}</StyledTableCell>
-                    <StyledTableCell>{notificacion.medio_notifiacion ? notificacion.medio_notifiacion : '-'}</StyledTableCell>
-                    <StyledTableCell>{notificacion.parametro_notifiacion ? notificacion.parametro_notifiacion : '-'}</StyledTableCell>
+                    <StyledTableCell>{notificacion.medio_notificacion ? notificacion.medio_notificacion : '-'}</StyledTableCell>
+                    <StyledTableCell>{notificacion.criterio_notificacion ? notificacion.criterio_notificacion : '-'}</StyledTableCell>
                     <StyledTableCell align="center">
                       <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
                       <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
@@ -365,7 +339,11 @@ export default function TabNotificaciones(props) {
             handleCerrar={handleCerrar}
             handleCategoriaChange={handleCategoriaChange}
             handleMedioNotificacionChange={handleMedioNotificacionChange}
+            handleCriterioNotificacionChange={handleCriterioNotificacionChange}
             handleDescripcionChange={handleDescripcionChange}
+            handleDiasObservacion={handleDiasObservacion}
+            handleModificador={handleModificador}
+            handleCantProductos={handleCantProductos}
           />
 
           <MessageModal
@@ -376,7 +354,7 @@ export default function TabNotificaciones(props) {
         </div>
       }
 
-      {props.isLoading && <LoadingData message="Aguarde por favor..." />}
+      {props.isLoading && <LoadingData message="Cargando configuraciones de notificación..." message2="Aguarde por favor." />}
 
     </div>
   );

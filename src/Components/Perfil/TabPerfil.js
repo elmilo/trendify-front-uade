@@ -26,7 +26,7 @@ const GuardarButton = styled(Button)({
 
 export default function TabPerfil(props) {
 
-  const [misDatos, setMisDatos] = React.useState(props.data);
+  const [misDatos, setMisDatos] = React.useState(null);
   const [isSaving, setIsSaving] = React.useState(false);
   const [validations, setValidations] = React.useState({
     emailIsValid: true,
@@ -66,15 +66,17 @@ export default function TabPerfil(props) {
 
   const handleGuardar = () => {
 
-    if (!misDatos?.hasOwnProperty('email'))
-      handleEmailChange();
+    var emailIsValid = true;
+    var telIsValid = true;
 
-    if (!misDatos?.hasOwnProperty('tel'))
-      handleTelefonoChange();
-
-    //Se validan todas las propiedades
-    var emailIsValid = misDatos != null && misDatos.email !== undefined && misDatos.email !== null && misDatos.email !== "";
-    var telIsValid = misDatos != null && misDatos.tel !== undefined && misDatos.tel !== null && misDatos.tel !== "";
+    if (!misDatos) {
+      setMisDatos(props.data);
+      emailIsValid = props.data != null && props.data.email !== undefined && props.data.email !== null && props.data.email !== "";
+      telIsValid = props.data != null && props.data.tel !== undefined && props.data.tel !== null && props.data.tel !== "";
+    } else {
+      emailIsValid = misDatos != null && misDatos.email !== undefined && misDatos.email !== null && misDatos.email !== "";
+      telIsValid = misDatos != null && misDatos.tel !== undefined && misDatos.tel !== null && misDatos.tel !== "";
+    }
 
     //Si hay alguna propiedad invalida se actualiza el estado con la validación de cada propiedad
     if (!emailIsValid || !telIsValid) {
@@ -89,7 +91,8 @@ export default function TabPerfil(props) {
 
       setIsSaving(true);
 
-      var request = { ...misDatos, 
+      var request = {
+        ...misDatos,
         idUsuario: props.data.idUsuario,
         nombre: props.data.nombre,
         apellido: props.data.apellido,
@@ -101,8 +104,8 @@ export default function TabPerfil(props) {
       console.log(request);
 
       createModificarUsuario(request)
-      .then((response) => { onGuardarResponseOk(response); })
-      .catch(error => { onGuardarResponseError(error) });
+        .then((response) => { onGuardarResponseOk(response); })
+        .catch(error => { onGuardarResponseError(error) });
     }
   }
 
@@ -113,16 +116,16 @@ export default function TabPerfil(props) {
 
     setMessageModal({
       isOpen: true,
-          severity: "success", //success | error | warning | info
-          title: "Actualización de Mis Datos Exitosa",
-          message: "Los datos del usuario fueron actualizados correctamente"
+      severity: "success", //success | error | warning | info
+      title: "¡Actualización de Mis Datos exitosa!",
+      message: "Los datos del usuario fueron actualizados correctamente."
     });
 
-    props.recargarMisDatos(() => {
+    props.recargarMisDatosEvent(() => {
       setIsSaving(false);
       limpiarValidaciones();
-    }, () => { 
-      setIsSaving(false); 
+    }, () => {
+      setIsSaving(false);
       limpiarValidaciones();
     });
   }
@@ -135,7 +138,7 @@ export default function TabPerfil(props) {
     setMessageModal({
       isOpen: true,
       severity: "error",
-      title: 'Actualización de Mis Datos :(',
+      title: 'Actualización de Mis Datos errónea',
       message: "Oops! Ocurrió un error al actualizar tus datos."
     });
   }
@@ -145,13 +148,13 @@ export default function TabPerfil(props) {
   return (
     <div>
 
-      <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-        Mis datos
-      </Typography>
-
       {props.data != null && !props.isLoading &&
 
         <div>
+
+          <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
+            Mis datos
+        </Typography>
 
           <Grid container spacing={3}>
             <Grid item lg={8} xs={12}>
@@ -178,7 +181,7 @@ export default function TabPerfil(props) {
               <TextField
                 id="comercio"
                 label="Comercio"
-                defaultValue={props.data.comercio}
+                defaultValue={props.data?.cliente?.nombre ?? '-'}
                 InputProps={{ readOnly: true }}
                 variant="outlined"
                 fullWidth
@@ -223,7 +226,7 @@ export default function TabPerfil(props) {
         </div>
       }
 
-      {props.isLoading && <LoadingData message="Aguarde por favor..." />}
+      {props.isLoading && <LoadingData message="Cargando tus datos..." message2="Aguarde por favor." />}
 
     </div>
   );
