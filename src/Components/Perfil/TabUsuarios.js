@@ -256,13 +256,14 @@ export default function TabUsuarios(props) {
   return (
     <div>
 
-      <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-        Adm. de Usuarios
-      </Typography>
-
       {props.data?.usuarios != null && !props.isLoading &&
 
         <div>
+
+        <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
+          Adm. de Usuarios
+        </Typography>
+
           <ButtonNuevoContainer maxWidth="lg">
             <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
           </ButtonNuevoContainer>
@@ -343,7 +344,7 @@ export default function TabUsuarios(props) {
 
       }
 
-      {props.isLoading && <LoadingData message="Aguarde por favor..."/>}
+      {props.isLoading && <LoadingData message="Cargando usuarios..." message2="Aguarde por favor."/>}
 
     </div>
   );

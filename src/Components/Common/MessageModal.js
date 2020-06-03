@@ -42,7 +42,7 @@ export default function ModalUsuario({ messageModal, handleCerrar }) {
               <CloseIcon />
             </IconButton>
           </MuiDialogTitle>
-          <DialogContent dividers style={{ padding: 0 }}>
+          <DialogContent dividers>
             <Alert severity={messageModal.severity}>{messageModal.message}</Alert>
           </DialogContent>
         </Dialog>
