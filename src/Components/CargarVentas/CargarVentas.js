@@ -58,14 +58,17 @@ export class CargarVentas extends React.Component {
     this.clearState = this.clearState.bind(this);
   }
 
+  addZero = function (anumber) {
+    return ((anumber < 10)? ('0' + anumber): anumber);
+  };
+
   formatDate = function (dateInt) {
 
     if (!isNaN(dateInt)) {
-
       var date = new Date((dateInt - (25567 + 1)) * 86400 * 1000);
-
-      var day = date.getDate();
-      var month = date.getMonth() + 1;
+      
+      var day = this.addZero(date.getDate());
+      var month = this.addZero(date.getMonth() + 1);
       var year = date.getFullYear();
 
       return day + "/" + month + "/" + year;
@@ -128,14 +131,8 @@ export class CargarVentas extends React.Component {
       "consumos" :this.state.consumos
     };
 
-    console.log('Request');
-    console.log(dUploadRequest);
-
     createConsumoMultiple({ "idCliente": "111", "consumos": this.state.consumos })
       .then((dUploadResponse) => {
-
-        console.log('Response');
-        console.log(dUploadResponse);
 
         this.setState(prevState => ({
           ...prevState,
