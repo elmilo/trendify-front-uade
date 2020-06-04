@@ -270,7 +270,7 @@ export default function TabNotificaciones(props) {
         <div>
 
         <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-          Adm. de Notificaciones
+          Configurar mis notificaciones
         </Typography>
 
           <ButtonNuevoContainer maxWidth="lg">

@@ -261,7 +261,7 @@ export default function TabUsuarios(props) {
         <div>
 
         <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-          Adm. de Usuarios
+          Gestión de usuarios asociados
         </Typography>
 
           <ButtonNuevoContainer maxWidth="lg">
