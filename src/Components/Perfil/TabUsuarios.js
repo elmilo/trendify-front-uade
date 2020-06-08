@@ -17,7 +17,7 @@ import ModalUsuario from "./Usuarios/ModalUsuario";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MessageModal from '../Common/MessageModal';
-import { createNuevoUsuario, createModificarUsuario } from '../../Axios/Axios';
+import { createNuevoUsuario, createModificarUsuario, createEliminarUsuario } from '../../Axios/Axios';
 import PaginationActions from '../Common/PaginationActions';
 import LoadingData from '../Common/LoadingData';
 
@@ -94,7 +94,7 @@ export default function TabUsuarios(props) {
     setUsuario(usuario);
   };
 
-  const handleAlta = () => { handleABM('A', { idCliente: '111', rol: 'Usuario' }) };
+  const handleAlta = () => { handleABM('A', { idCliente: '111', rol: 'Usuario', pass: '12345678' }) };
 
   const handleEdicion = (usuario) => { handleABM('M', usuario) };
 
@@ -214,6 +214,37 @@ export default function TabUsuarios(props) {
     });
   }
 
+  const onEliminarResponseOk = (response) => {
+
+    console.log('Request BAJA Usuario:');
+    console.log(usuario);
+
+    setMessageModal({
+      isOpen: true,
+        severity: "success",
+        title: "¡Baja de usuario exitosa!",
+        message: "El usuario fue eliminado correctamente."
+    });
+
+    props.recargarListadoUsuariosEvent(() => {
+      setIsSaving(false);      
+      cerrarFormulario();
+    });
+  }
+
+  const onEliminarResponseError = (error) => {
+
+    console.log('Response ' + (modalABM === 'A' ? + 'ALTA' : 'EDICIÓN') + ' Usuario:');
+    console.log(error);
+
+    setMessageModal({
+      isOpen: true,
+      severity: "error",
+      title: "Baja de usuario errónea",
+      message: "Oops! Ocurrió un error al eliminar el usuario."
+    });
+  }
+
   const handleEliminar = () => {
 
     console.log('Request BAJA Usuario:');
@@ -223,25 +254,9 @@ export default function TabUsuarios(props) {
 
     //Llamada a la API para dar de eliminar
 
-    setTimeout(() => {
-
-      setIsSaving(false);
-
-      setMessageModal({
-        isOpen: true,
-        severity: "success",
-        title: "¡Baja de usuario exitosa!",
-        message: "El usuario fue eliminado correctamente."
-      });
-
-      console.log('Response BAJA Usuario:');
-      console.log(usuario);
-
-      //LLamada a la API para recargar el listado de usuarios
-
-      limpiarValidaciones();
-      cerrarFormulario();
-    }, 2000);
+    createEliminarUsuario(usuario.id)
+    .then((response) => { onEliminarResponseOk(response) })
+    .catch(error => { onEliminarResponseError(error) });
   }
 
   const handleCerrar = () => {

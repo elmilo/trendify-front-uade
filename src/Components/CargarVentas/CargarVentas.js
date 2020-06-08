@@ -7,6 +7,7 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { styled } from '@material-ui/core/styles';
+import auth from '../../ProtectedRoutes/auth';
 import XLSX from 'xlsx/xlsx';
 import { Alert, AlertTitle } from '@material-ui/lab';
 
@@ -126,12 +127,7 @@ export class CargarVentas extends React.Component {
       isUploading: true
     }));
 
-    var dUploadRequest = {
-      "idCliente": "111", 
-      "consumos" :this.state.consumos
-    };
-
-    createConsumoMultiple({ "idCliente": "111", "consumos": this.state.consumos })
+    createConsumoMultiple({ "idCliente": auth.getIdCliente(), "consumos": this.state.consumos })
       .then((dUploadResponse) => {
 
         this.setState(prevState => ({

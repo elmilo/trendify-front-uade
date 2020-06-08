@@ -12,6 +12,7 @@ import Layout from '../Layout/Layout.js'
 import TabNotificaciones from "./TabNotificaciones.js";
 import TabUsuarios from "./TabUsuarios.js";
 import TabPerfil from "./TabPerfil.js";
+import auth from '../../ProtectedRoutes/auth';
 import { getListadoUsuarios, getListadoNotificaciones, getUsuario } from '../../Axios/Axios';
 
 TabPanel.propTypes = {
@@ -92,7 +93,7 @@ export default function Perfil() {
 
     setIsLoadingNotificaciones(true);
 
-    getListadoNotificaciones("111")
+    getListadoNotificaciones(auth.getIdUsuario())
       .then((response) => {
         setNotificaciones(response);
         setIsLoadingNotificaciones(false);
@@ -112,7 +113,7 @@ export default function Perfil() {
 
     setIsLoadingMisDatos(true);
 
-    getUsuario("111")
+    getUsuario(auth.getIdUsuario())
       .then((response) => {
         setMisDatos(response);
         setIsLoadingMisDatos(false);

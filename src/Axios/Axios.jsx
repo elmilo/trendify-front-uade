@@ -1,6 +1,6 @@
 import axios from "axios";
 import dataListadoNotifiacionesResponse from "../Assets/dataListadoNotificacionesResponse";
-import dataGetMisDatosResponse from "../Assets/dataGetMisDatosResponse";
+import dataTopNotificacionesUsuarioResponse from "../Assets/dataTopNotificacionesUsuarioResponse";
 const TRENDIFY_ENDPOINT = "https://seminario-back.herokuapp.com/app/";
 
 let config = {
@@ -8,7 +8,6 @@ let config = {
     'Content-Type': 'application/json'
   }
 }
-
 
 export const createConsumoMultiple = (rawdata) => {
   return axios
@@ -35,6 +34,14 @@ export const createModificarUsuario = (rawdata) => {
   });
 };
 
+export const createEliminarUsuario = (idUsuario) => {
+  return axios
+    .post("/eliminarUsuario/" + idUsuario, null, config)
+    .then((response) => {
+      return response.data;
+  });
+};
+
 export const getListadoUsuarios = (idCliente) => {
   return axios
     .get("/listadoUsuarios/" + idCliente, null, config)
@@ -53,9 +60,25 @@ export const getListadoNotificaciones = (idCliente) => {
 
 export const getUsuario = (idUsuario) => {
   return axios
+    .get("/getUsuario/" + idUsuario, null, config)
+    .then((response) => {
+      return response.data;
+  });
+};
+
+export const getTopNotificacionesUsuario = (idUsuario) => {
+  return axios
     .get("/listadoUsuarios/" + idUsuario, null, config)
     .then((response) => {
-      return dataGetMisDatosResponse;
+      return dataTopNotificacionesUsuarioResponse;
+  });
+};
+
+export const getLogin = (email, password) => {
+  return axios
+    .post("/login/", { email: email, pass: password }, config)
+    .then((response) => {
+      return response.data;
   });
 };
 

@@ -1,0 +1,57 @@
+.loginContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-width: 100vw;
+  min-height: 100vh;
+  background: #2c2c34;
+  background-size: cover;
+  text-align: center;
+}
+
+.loginInput{
+  margin: 15px 0;
+}
+
+.loginButton{
+  margin-top: 30px;
+}
+
+.loginButton .MuiButton-containedSecondary {
+  background-color: #0BCE64,
+}
+
+.loginButton .MuiButton-containedSecondary:hover {
+  background-color: #00AE44,
+}
+
+.loginButton .MuiButton-containedSecondary:disabled {
+  background-color: rgb(233, 245, 237),
+}
+
+@media(max-width:767px){
+  .logo-trendify {
+    height: 40px;
+  }
+}
+
+@media(min-width:768px){
+  .logo-trendify {
+    height: 60px;
+  }
+}
+
+@media(min-width:992px){
+  .logo-trendify {
+    height: 80px;
+  }
+}
+
+@media(min-width:1200px){
+  .logo-trendify {
+    height: 100px;
+  }
+}
+
+

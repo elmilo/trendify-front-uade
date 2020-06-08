@@ -8,14 +8,15 @@ import CargarVentas from './Components/CargarVentas/CargarVentas.js';
 import Proveedores from './Components/Proveedores/Proveedores.js';
 import Tendencias from './Components/Tendencias/Tendencias.js';
 import Perfil from './Components/Perfil/Perfil.js';
+import Login from './Components/Login/Login';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={Dashboard} />
-          {/* <Route exact path="/auth/login" component={Login} /> */}
+          <Route exact path="/auth/login" component={Login} />
+          <ProtectedRoute exact path="/" component={Dashboard} />
           <ProtectedRoute exact path="/cargarVentas" component={CargarVentas} />
           <ProtectedRoute exact path="/proveedores" component={Proveedores} />
           <ProtectedRoute exact path="/tendencias" component={Tendencias} />
