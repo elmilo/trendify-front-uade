@@ -26,6 +26,10 @@ const auth = {
       }
    },
    isConnected() {
+
+      if(!this.getIdUsuario() || !this.getIdCliente())
+         return false;
+
       return localStorage.getItem('isAuthenticated');
    },
    getIdUsuario() {

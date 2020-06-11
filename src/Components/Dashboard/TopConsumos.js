@@ -6,6 +6,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Alert from '@material-ui/lab/Alert';
+import LoadingData from '../Common/LoadingData';
 import Title from './Title';
 
 const useStyles = makeStyles((theme) => ({
@@ -19,32 +21,33 @@ export default function Orders(props) {
   return (
     <React.Fragment>
       <Title>Productos más vendidos</Title>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Fecha</TableCell>
-            <TableCell>Producto</TableCell>
-            <TableCell align = 'center'>Cantidad</TableCell>
-            <TableCell align = 'center'>Contra Sem. Anterior</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {props.topConsumos === null && <div>Cargando...</div>}
-          {props.topConsumos !== null && props.topConsumos.consumos.map((consumo) => (
-            <TableRow key={consumo.id}>
-              <TableCell>{consumo.date}</TableCell>
-              <TableCell>{consumo.name}</TableCell>
-              <TableCell align = 'center'>{consumo.shipTo}</TableCell>
-              <TableCell align = 'center'>{consumo.paymentMethod}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <div className={classes.seeMore}>
-        <Linka color="primary" href="#">
-          Mostrar más...
-        </Linka>
-      </div>
+      {props.topConsumos === null && <LoadingData message="Obteniendo productos..." />}
+      {props.topConsumos !== null && props.topConsumos.consumos.length <= 0 && <Alert severity="info">No se encontraron productos.</Alert> }
+      {props.topConsumos !== null && props.topConsumos.consumos.length > 0 &&
+        <div>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Producto</TableCell>
+                <TableCell align='center'>Cantidad</TableCell>
+                <TableCell align='center'>Contra Sem. Anterior</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+            {props.topConsumos.consumos.length > 0 && props.topConsumos.consumos.map((consumo) => (
+                <TableRow key={consumo.id}>
+                  <TableCell>{consumo.nombre}</TableCell>
+                  <TableCell align='center'>{consumo.cantidad}</TableCell>
+                  <TableCell align='center'>{consumo.cantidadSemAnt}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className={classes.seeMore}>
+            <Linka color="primary" href="#">Mostrar más...</Linka>
+          </div>
+        </div>
+      }
     </React.Fragment>
   );
 }
