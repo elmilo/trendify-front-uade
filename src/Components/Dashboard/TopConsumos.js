@@ -8,34 +8,17 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod) {
-  return { id, date, name, shipTo, paymentMethod };
-}
-
-const rows = [
-  createData(0, '16 Mar, 2020', 'Leche La Serenísima 1 lt Doy', '850', '+'),
-  createData(1, '16 Mar, 2020', 'Mayonesa Hellmans Clasica pouch 237 gr.', '641', '-'),
-  createData(2, '16 Mar, 2020', 'Jabón líquido Skip 3 lt', '532', '='),
-  createData(3, '16 Mar, 2020', 'Lavandina Ayudín Máxima pureza botella 1 lt', '325', '+'),
-  createData(4, '15 Mar, 2020', 'Patitas de pollo Granja del Sol por 400 gr', '105', '+'),
-];
-
-function preventDefault(event) {
-  event.preventDefault();
-}
-
 const useStyles = makeStyles((theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
 }));
 
-export default function Orders() {
+export default function Orders(props) {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <Title>Producto más vendidos en tu zona</Title>
+      <Title>Productos más vendidos</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -46,18 +29,19 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell align = 'center'>{row.shipTo}</TableCell>
-              <TableCell align = 'center'>{row.paymentMethod}</TableCell>
+          {props.topConsumos === null && <div>Cargando...</div>}
+          {props.topConsumos !== null && props.topConsumos.consumos.map((consumo) => (
+            <TableRow key={consumo.id}>
+              <TableCell>{consumo.date}</TableCell>
+              <TableCell>{consumo.name}</TableCell>
+              <TableCell align = 'center'>{consumo.shipTo}</TableCell>
+              <TableCell align = 'center'>{consumo.paymentMethod}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
       <div className={classes.seeMore}>
-        <Linka color="primary" href="#" onClick={preventDefault}>
+        <Linka color="primary" href="#">
           Mostrar más...
         </Linka>
       </div>

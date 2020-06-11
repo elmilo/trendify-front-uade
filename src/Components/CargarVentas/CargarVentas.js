@@ -89,7 +89,15 @@ export class CargarVentas extends React.Component {
     const rABS = !!reader.readAsBinaryString;
 
     reader.onabort = () => console.log('file reading was aborted')
-    reader.onerror = () => console.log('file reading has failed')
+    
+    reader.onerror = () => 
+    { 
+      this.setState(prevState => ({
+        ...prevState,
+        hasFileRead: true
+      })); 
+    }
+    
     reader.onload = (e) => {
 
       const wb = XLSX.read(e.target.result, { type: rABS ? 'binary' : 'array', bookVBA: true });
@@ -146,6 +154,7 @@ export class CargarVentas extends React.Component {
     this.setState({
       files: [],
       isUploading: false,
+      hasFileRead: false,
       hasUploadResponse: false,
       hasUploadErrors: false,
       uploadResponse: null,
@@ -183,7 +192,7 @@ export class CargarVentas extends React.Component {
               </div>
             }
 
-            {this.state.hasUploadResponse && !this.state.hasUploadErrors &&
+            {this.state.hasFileRead && this.state.hasUploadResponse && !this.state.hasUploadErrors &&
               <div>
                 <Alert severity="info">
                   <AlertTitle>Importación exitosa! El archivo fue <strong>importado correctamente.</strong></AlertTitle>
@@ -191,8 +200,7 @@ export class CargarVentas extends React.Component {
               </div>
             }
 
-            {this.state.hasUploadResponse && this.state.hasUploadErrors &&
-
+            {this.state.hasFileRead && this.state.hasUploadResponse && this.state.hasUploadErrors &&
               <div>
                 <Alert severity="error">
                   <AlertTitle>El archivo contiene errores. Por favor, realice las correcciones correspondientes en los siguientes consumos <strong>y vuelva a importarlo!</strong></AlertTitle>
@@ -202,7 +210,15 @@ export class CargarVentas extends React.Component {
               </div>
             }
 
-            {this.state.hasUploadResponse &&
+            {this.state.hasFileRead && !this.state.hasUploadResponse &&
+              <div>
+                <Alert severity="error">
+                  <AlertTitle>Oops, parece que el archivo está corrupto. No se pudo procesar la información.</AlertTitle>
+                </Alert>
+              </div>
+            }
+
+            {this.state.hasFileRead &&
 
               <VolverButton variant="contained" color="default" fullWidth onClick={this.clearState}>Volver a Cargar ventas</VolverButton>
             }

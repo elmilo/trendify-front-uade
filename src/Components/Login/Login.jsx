@@ -43,14 +43,6 @@ const CustomTextField = withStyles({
     },
 })(TextField);
 
-const IngresarButton = withStyles({
-    'border-radius': '0.2rem !important',
-    '& span': {
-        padding: '5px !important',
-        fontSize: '18px'
-    }
-})(Button);
-
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -106,8 +98,8 @@ export default class Login extends Component {
                         </div>
                         <div className="loginButton">
                             {this.state.hasError && <p style={{ color: "red" }}>Email o password incorrecto/s.</p>}
-                            {!this.state.isLoading && <IngresarButton type="submit" variant="contained" color="secondary"  fullWidth>Ingresar</IngresarButton>}
-                            {this.state.isLoading && <IngresarButton variant="contained" color="primary" fullWidth disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }} /> Validando...</IngresarButton>}
+                            {!this.state.isLoading && <Button type="submit" variant="contained" color="secondary"  fullWidth>Ingresar</Button>}
+                            {this.state.isLoading && <Button variant="contained" color="primary" fullWidth disabled> <CircularProgress size={18} color="secondary" style={{ marginRight: '10px' }} /> Validando...</Button>}
                         </div>
                     </form>
                 </Container>

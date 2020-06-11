@@ -147,10 +147,10 @@ export default function ModalUsuario(props) {
                       <FormLabel component="legend">Criterios de notificación </FormLabel>
                       <RadioGroup aria-label="criterios-noti" name="criterios" onChange={(e) => props.handleCriterioNotificacionChange(e.target?.value)} value={props.notificacion?.id_criterioNotificacion ?? 'criterio01'}>
                         <Tooltip title="Se notificará si el promedio de las ventas de los últimos 4 días superó o disminuyó más de un 10% sobre el promedio de los últimos 15 días." placement="right">
-                          <FormControlLabel value="criterio01" control={<Radio />} label="Delta de 10% en los últimos 2 días, ventana de 15 días" />
+                          <FormControlLabel value="criterio01" control={<Radio />} label="Variación del 10% en los últimos 2 días, observación de 15 días" />
                         </Tooltip>
                         <Tooltip title="Se notificará si el promedio de las ventas de los últimos 4 días superó o disminuyó más de un 15% sobre el promedio de los últimos 20 días." placement="right">
-                          <FormControlLabel value="criterio02" control={<Radio />} label="Delta de 15% en los últimos 4 días, ventana de 20 días" />
+                          <FormControlLabel value="criterio02" control={<Radio />} label="Variación del 15% en los últimos 4 días, observación de 20 días" />
                         </Tooltip>
                         <Tooltip title="Se notificará si la cantidad de productos vendidos (en última carga) es 'Mayor', 'Mayor o igual', 'Menor' ó 'Menor igual' a la cantidad de productos especificada." placement="right">
                           <FormControlLabel value="criterio03" control={<Radio />} label="Personalizada" />

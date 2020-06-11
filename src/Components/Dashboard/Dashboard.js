@@ -4,8 +4,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Chart from "./Chart";
-import Orders from "./Orders";
-import Layout from '../Layout/Layout.js'
+import TopConsumos from "./TopConsumos";
+import Layout from '../Layout/Layout.js';
+import auth from '../../ProtectedRoutes/auth';
+import { getTopConsumos } from '../../Axios/Axios';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -23,7 +25,39 @@ export default function Dashboard() {
   
   const classes = useStyles();
 
+  const [isLoadingTopConsumos, setIsLoadingTopConsumos] = React.useState(false);
+  const [topConsumos, setTopConsumos] = React.useState(null);
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  const recargarTopConsumos = (onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingTopConsumos(true);
+
+    var today = new Date();
+      
+    var day = String(today.getDate()).padStart(2, '0');
+    var month = String(today.getMonth() + 1).padStart(2, '0');
+    var year = today.getFullYear();
+
+    getTopConsumos(auth.getIdCliente(), day, month, year)
+      .then((dResponse) => {
+        setTopConsumos(dResponse);
+        setIsLoadingTopConsumos(false);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        console.log('Response Top Consumos:');
+        console.log(error);
+        setIsLoadingTopConsumos(false);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
+  if (topConsumos === null && !isLoadingTopConsumos) {
+    recargarTopConsumos();
+  }
 
   return (
     <div>
@@ -38,7 +72,7 @@ export default function Dashboard() {
             {/* Recent Orders */}
             <Grid item xs={12} md={12} lg={12}>
               <Paper className={classes.paper}>
-                <Orders />
+                <TopConsumos topConsumos={topConsumos} />
               </Paper>
             </Grid>
           </Grid>

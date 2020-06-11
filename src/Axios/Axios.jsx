@@ -82,6 +82,15 @@ export const getLogin = (email, password) => {
   });
 };
 
+export const getTopConsumos = (idCliente, dia, mes, anio) => {
+  return axios
+    .get("/getTop15Consumos/" + idCliente + "/" + dia + "/" + mes + "/" + anio, null, config)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+  });
+};
+
 export const getTrendData = (parameter) => {
   /*return axios
       .get(TRENDIFY_ENDPOINT + "/feriados/" + anio)

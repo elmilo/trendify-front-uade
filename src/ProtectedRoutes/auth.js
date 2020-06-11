@@ -2,9 +2,10 @@ const auth = {
    isAuthenticated: false,
    authenticate(session, callback) {
        this.isAuthenticated = true;
+      console.log(session);
       localStorage.setItem('isAuthenticated', true);
       localStorage.setItem('idUsuario', session.id);
-      localStorage.setItem('idCliente', session.cliente.id);
+      localStorage.setItem('idCliente', session.cliente.idCliente);
       localStorage.setItem('nombre', session.nombre);
       localStorage.setItem('apellido', session.apellido);
 
