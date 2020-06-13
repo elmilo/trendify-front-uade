@@ -165,9 +165,6 @@ export default function TabUsuarios(props) {
 
       setIsSaving(true);
 
-      console.log('Request ' + (modalABM === 'A' ? + 'ALTA' : 'EDICIÓN') + ' Usuario:');
-      console.log(usuario);
-
       if (modalABM === 'A') {
 
         createNuevoUsuario(usuario)
@@ -184,10 +181,6 @@ export default function TabUsuarios(props) {
   }
 
   const onGuardarResponseOk = (response) => {
-
-    console.log('Response ' + (modalABM === 'A' ? 'ALTA' : 'EDICIÓN') + ' Usuario:');
-    console.log(response);
-
     setMessageModal({
       isOpen: true,
       severity: "success",
@@ -203,10 +196,6 @@ export default function TabUsuarios(props) {
   }
 
   const onGuardarResponseError = (error) => {
-
-    console.log('Response ' + (modalABM === 'A' ? + 'ALTA' : 'EDICIÓN') + ' Usuario:');
-    console.log(error);
-
     setMessageModal({
       isOpen: true,
       severity: "error",
@@ -216,10 +205,6 @@ export default function TabUsuarios(props) {
   }
 
   const onEliminarResponseOk = (response) => {
-
-    console.log('Request BAJA Usuario:');
-    console.log(usuario);
-
     setMessageModal({
       isOpen: true,
         severity: "success",
@@ -234,10 +219,6 @@ export default function TabUsuarios(props) {
   }
 
   const onEliminarResponseError = (error) => {
-
-    console.log('Response ' + (modalABM === 'A' ? + 'ALTA' : 'EDICIÓN') + ' Usuario:');
-    console.log(error);
-
     setMessageModal({
       isOpen: true,
       severity: "error",

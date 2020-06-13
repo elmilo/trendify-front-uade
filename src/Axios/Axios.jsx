@@ -1,5 +1,4 @@
 import axios from "axios";
-import dataListadoNotifiacionesResponse from "../Assets/dataListadoNotificacionesResponse";
 import dataTopNotificacionesUsuarioResponse from "../Assets/dataTopNotificacionesUsuarioResponse";
 const TRENDIFY_ENDPOINT = "https://seminario-back.herokuapp.com/app/";
 
@@ -9,19 +8,34 @@ let config = {
   }
 }
 
+/* #region CONSUMOS */
+
 export const createConsumoMultiple = (rawdata) => {
   return axios
     .post("/createConsumoMultiple/", rawdata, config)
     .then((response) => {
-    //console.log("axios response.data " + response.data);
+    //console.log(response);
     return response.data;
   });
 };
+
+export const getTopConsumos = (idCliente, dia, mes, anio) => {
+  return axios
+    .get("/getTop15Consumos/" + idCliente + "/" + dia + "/" + mes + "/" + anio, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+/* #endregion CONSUMOS */
+/* #region USUARIOS */
 
 export const createNuevoUsuario = (rawdata) => {
   return axios
     .post("/nuevoUsuario/", rawdata, config)
     .then((response) => { 
+      //console.log(response);
       return response.data;
   });
 };
@@ -30,6 +44,7 @@ export const createModificarUsuario = (rawdata) => {
   return axios
     .post("/modificarUsuario/", rawdata, config)
     .then((response) => {
+      //console.log(response);
       return response.data;
   });
 };
@@ -38,6 +53,16 @@ export const createEliminarUsuario = (idUsuario) => {
   return axios
     .post("/eliminarUsuario/" + idUsuario, null, config)
     .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+export const getUsuario = (idUsuario) => {
+  return axios
+    .get("/getUsuario/" + idUsuario, null, config)
+    .then((response) => {
+      //console.log(response);
       return response.data;
   });
 };
@@ -46,22 +71,7 @@ export const getListadoUsuarios = (idCliente) => {
   return axios
     .get("/listadoUsuarios/" + idCliente, null, config)
     .then((response) => {
-      return response.data;
-  });
-};
-
-export const getListadoNotificaciones = (idCliente) => {
-  return axios
-    .get("/listadoUsuarios/" + idCliente, null, config)
-    .then((response) => {
-      return dataListadoNotifiacionesResponse;
-  });
-};
-
-export const getUsuario = (idUsuario) => {
-  return axios
-    .get("/getUsuario/" + idUsuario, null, config)
-    .then((response) => {
+      //console.log(response);
       return response.data;
   });
 };
@@ -70,26 +80,84 @@ export const getTopNotificacionesUsuario = (idUsuario) => {
   return axios
     .get("/listadoUsuarios/" + idUsuario, null, config)
     .then((response) => {
+      //console.log(response);
       return dataTopNotificacionesUsuarioResponse;
   });
 };
 
-export const getLogin = (email, password) => {
+/* #endregion USUARIOS */
+/* #region CONFIG. NOTIFICACIONES */
+
+export const createNotificacion = (rawdata) => {
   return axios
-    .post("/login/", { email: email, pass: password }, config)
+    .post("/createNotificacion/", rawdata, config)
     .then((response) => {
       return response.data;
   });
 };
 
-export const getTopConsumos = (idCliente, dia, mes, anio) => {
+export const modificarNotificacion = (rawdata) => {
+  console.log(rawdata);
   return axios
-    .get("/getTop15Consumos/" + idCliente + "/" + dia + "/" + mes + "/" + anio, null, config)
+    .post("/modificarNotificacion/", rawdata, config)
     .then((response) => {
       console.log(response);
       return response.data;
   });
 };
+
+export const eliminarNotificacion = (idNotificacion) => {
+  return axios
+    .post("/eliminarNotificacion/" + idNotificacion, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+export const getNotificacion = (idNotificacion) => {
+  return axios
+    .get("/getNotificacion/" + idNotificacion, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+export const getListadoNotificaciones = (idUsuario) => {
+  return axios
+    .get("/getNotificacionesPorUsuario/" + idUsuario, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+/* #endregion CONFIG. NOTIFICACIONES */
+/* #region LOGIN */
+
+export const getLogin = (email, password) => {
+  return axios
+    .post("/login/", { email: email, pass: password }, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+/* #endregion LOGIN */
+/* #region COMMON */
+
+export const getCategorias = () => {
+  return axios
+    .get("/getCategorias/", null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+/* #endregion COMMON */
 
 export const getTrendData = (parameter) => {
   /*return axios
@@ -114,20 +182,5 @@ export const getTrendData = (parameter) => {
   ];
 
   return response;
-};
-
-export const postExcelData = (ExcelData) => {
-  /*const newUserObject = {
-        username: newUser.username,
-        password: md5(newUser.password),
-        email: newUser.email
-    };*/
-
-  return axios
-    .post(TRENDIFY_ENDPOINT + "DataEndpoint" + ExcelData)
-    .then((response) => {
-      console.log("axios response.data " + response.data);
-      return response.data;
-    });
 };
 

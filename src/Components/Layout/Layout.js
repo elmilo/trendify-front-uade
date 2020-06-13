@@ -128,8 +128,6 @@ const Layout = ({ children, title }) => {
           onSuccessCallback();
       })
       .catch(error => {
-        console.log('Response Top 5 Notificaciones:');
-        console.log(error);
         setIsLoadingNotificacionesUsuario(false);
         if (onErrorCallback)
           onErrorCallback();

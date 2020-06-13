@@ -19,6 +19,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import MessageModal from '../Common/MessageModal';
 import PaginationActions from '../Common/PaginationActions';
 import LoadingData from '../Common/LoadingData';
+import Alert from '@material-ui/lab/Alert';
+import { getCategorias, createNotificacion, modificarNotificacion, eliminarNotificacion } from '../../Axios/Axios';
+import auth from '../../ProtectedRoutes/auth';
 
 const ButtonNuevoContainer = styled(Container)({
   textAlign: 'right',
@@ -64,17 +67,17 @@ export default function TabNotificaciones(props) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [modalABM, setModalABM] = React.useState('');
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isLoadingCategorias, setIsLoadingCategorias] = React.useState(false);
+  const [categorias, setCategorias] = React.useState(null);
 
   const [notificacion, setNotificacion] = React.useState(null);
   const [validations, setValidations] = React.useState({
-      descripcionIsValid: true,
-      id_CategoriaIsValid: true,
-      id_MedioNotificacionIsValid: true,
-      id_criterioNotificacionIsValid: true,
-      diasObservacionIsValid: true,
-      modificadorIsValid: true,
-      cantProductosIsValid: true,
-      esCriterioPersonalizado: false
+    descripcionIsValid: true,
+    categoriaIsValid: true,
+    medioNotificacionIsValid: true,
+    deltaIsValid: true,
+    ultimosDiasIsValid: true,
+    ventanaIsValid: true
   });
   const [messageModal, setMessageModal] = React.useState({
     isOpen: false,
@@ -84,8 +87,30 @@ export default function TabNotificaciones(props) {
   });
 
   const rowsPerPage = 5;
-  const emptyRows = props.data?.notificaciones != null ? rowsPerPage - Math.min(rowsPerPage, props.data.notificaciones.length - page * rowsPerPage) : rowsPerPage;
-  var notificacionesPaginado = props.data?.notificaciones?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const emptyRows = props.data != null ? rowsPerPage - Math.min(rowsPerPage, props.data.length - page * rowsPerPage) : rowsPerPage;
+  var notificacionesPaginado = props.data?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  const recargarCategorias = (onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingCategorias(true);
+
+    getCategorias()
+      .then((response) => {
+        setCategorias(response);
+        setIsLoadingCategorias(false);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        setIsLoadingCategorias(false);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
+  if (categorias === null && !isLoadingCategorias) {
+    recargarCategorias();
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -97,25 +122,72 @@ export default function TabNotificaciones(props) {
     setNotificacion(notificacion);
   };
 
-  const handleAlta = () => { handleABM('A', { id_Usuario: 1, id_criterioNotificacion: 'criterio01' }); }
+  const handleAlta = () => {
+    handleABM('A', {
+      idUsuario: auth.getIdUsuario(),
+      criterioNotificacion: 'criterio01',
+      delta: 10,
+      ultimosDias: 2,
+      ventana: 15
+    });
+  }
 
-  const handleEdicion = (notificacion) => { 
+  const handleEdicion = (notificacion) => {
     handleABM('M', notificacion);
 
     setValidations(prevState => ({
       ...prevState,
       esCriterioPersonalizado: notificacion.id_criterioNotificacion === 'criterio03'
     }));
+
+    if (notificacion.delta === 10 && notificacion.ultimosDias === 2 && notificacion.ventana === 15) {
+
+      setValidations(prevState => ({
+        ...prevState,
+        esCriterioPersonalizado: false
+      }));
+
+      setNotificacion(prevState => ({
+        ...prevState,
+        criterioNotificacion: 'criterio01'
+      }));
+
+    } else if (notificacion.delta === 15 && notificacion.ultimosDias === 4 && notificacion.ventana === 20) {
+      
+      setValidations(prevState => ({
+        ...prevState,
+        esCriterioPersonalizado: false
+      }));
+
+      setNotificacion(prevState => ({
+        ...prevState,
+        criterioNotificacion: 'criterio02'
+      }));
+
+    } else {
+      
+      setValidations(prevState => ({
+        ...prevState,
+        esCriterioPersonalizado: true
+      }));
+
+      setNotificacion(prevState => ({
+        ...prevState,
+        criterioNotificacion: 'criterio03'
+      }));
+    }
   }
 
   const handleBaja = (notificacion) => { handleABM('B', notificacion); }
 
   const setFormInputChange = (prop, value, isValidProp) => {
 
-    setValidations(prevState => ({
-      ...prevState,
-      [isValidProp]: true
-    }));
+    if (isValidProp) {
+      setValidations(prevState => ({
+        ...prevState,
+        [isValidProp]: true
+      }));
+    }
 
     setNotificacion(prevState => ({
       ...prevState,
@@ -123,25 +195,43 @@ export default function TabNotificaciones(props) {
     }));
   }
 
-  const handleMedioNotificacionChange = (value) => { setFormInputChange('id_medio_notificacion', value, 'id_MedioNotifiacionIsValid'); }
+  const handleMedioNotificacionChange = (value) => { setFormInputChange('medio', value, 'medioNotificacionIsValid'); }
 
-  const handleCategoriaChange = (value) => { setFormInputChange('id_categoria', value, 'id_CategoriaIsValid'); }
+  const handleCategoriaChange = (value) => { setFormInputChange('categoria', value, 'categoriaIsValid'); }
 
-  const handleCriterioNotificacionChange = (value) => { 
-    
-    setFormInputChange('id_criterioNotificacion', value, 'id_criterioNotificacionIsValid'); 
+  const handleCriterioNotificacionChange = (value) => {
 
-    setValidations(prevState => ({
-      ...prevState,
-      esCriterioPersonalizado: value === 'criterio03'
-    }));
+    setFormInputChange('criterioNotificacion', value);
+
+    if (value === 'criterio01') {
+      setNotificacion(prevState => ({
+        ...prevState,
+        delta: 10,
+        ultimosDias: 2,
+        ventana: 15,
+      }));
+    } else if (value === 'criterio02') {
+      setNotificacion(prevState => ({
+        ...prevState,
+        delta: 15,
+        ultimosDias: 4,
+        ventana: 20,
+      }));
+    } else {
+      setNotificacion(prevState => ({
+        ...prevState,
+        delta: null,
+        ultimosDias: null,
+        ventana: null,
+      }));
+    }
   }
 
-  const handleDiasObservacion = (value) => { setFormInputChange('diasObservacion_criterio03', value, 'diasObservacionIsValid'); }
+  const handleDelta = (value) => { setFormInputChange('delta', value, 'deltaIsValid'); }
 
-  const handleModificador = (value) => { setFormInputChange('modificador_criterio03', value, 'modificadorIsValid'); }
+  const handleUltimosDias = (value) => { setFormInputChange('ultimosDias', value, 'ultimosDiasIsValid'); }
 
-  const handleCantProductos = (value) => { setFormInputChange('cantProductos_criterio03', value, 'cantProductosIsValid'); }
+  const handleVentana = (value) => { setFormInputChange('ventana', value, 'ventanaIsValid'); }
 
   const handleDescripcionChange = (value) => { setFormInputChange('descripcion', value, 'descripcionIsValid'); }
 
@@ -153,106 +243,113 @@ export default function TabNotificaciones(props) {
   const limpiarValidaciones = () => {
     setValidations({
       descripcionIsValid: true,
-      id_CategoriaIsValid: true,
-      id_MedioNotificacionIsValid: true,
-      id_criterioNotificacionIsValid: true,
-      diasObservacionIsValid: true,
-      modificadorIsValid: true,
-      cantProductosIsValid: true,
-      esCriterioPersonalizado: false
+      categoriaIsValid: true,
+      medioNotificacionIsValid: true,
+      deltaIsValid: true,
+      ultimosDiasIsValid: true,
+      ventanaIsValid: true
+    });
+  }
+
+  const onGuardarResponseOk = (response) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "success", //success | error | warning | info
+      title: modalABM === 'A' ? "¡Alta de notificacion exitosa!" : "¡Edición de notificacion exitosa!",
+      message: modalABM === 'A' ? "La configuración  de notificaciones fue dada de alta correctamente." : "La configuración de notificaciones fue actualizada correctamente."
+    });
+
+    props.recargarListadoNotificacionesEvent(() => {
+      setIsSaving(false);
+      limpiarValidaciones();
+      cerrarFormulario();
+    });
+  }
+
+  const onGuardarResponseError = (error) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "error",
+      title: (modalABM === 'A' ? 'Alta' : 'Edición') + " de notificación errónea :(",
+      message: "Oops! Ocurrió un error al " + (modalABM === 'A' ? 'dar de alta' : 'editar') + " la configuración de notificaciones."
+    });
+  }
+
+  const onEliminarResponseOk = (response) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "success", //success | error | warning | info
+      title: "¡Baja de notificación exitosa!",
+      message: "La configuración de notificaciones fue eliminada correctamente."
+    });
+
+    props.recargarListadoNotificacionesEvent(() => {
+      setIsSaving(false);
+      cerrarFormulario();
+    });
+  }
+
+  const onEliminarResponseError = (error) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "error",
+      title: "Baja de notificación errónea",
+      message: "Oops! Ocurrió un error al eliminar la configuración de notificaciones."
     });
   }
 
   const handleGuardar = () => {
 
-    console.log(notificacion);
-
     //Se validan todas las propiedades
     var descripcionIsValid = notificacion.descripcion !== undefined && notificacion.descripcion !== null && notificacion.descripcion !== "";
-    var id_CategoriaIsValid = notificacion.id_categoria !== undefined && notificacion.id_categoria !== null && notificacion.id_categoria !== "";
-    var id_MedioNotificacionIsValid = notificacion.id_medio_notificacion !== undefined && notificacion.id_medio_notificacion !== null && notificacion.id_medio_notificacion !== "";
-    var id_criterioNotificacionIsValid = notificacion.id_criterioNotificacion !== undefined && notificacion.id_criterioNotificacion !== null && notificacion.id_criterioNotificacion !== "";
+    var categoriaIsValid = notificacion.categoria !== undefined && notificacion.categoria !== null && notificacion.categoria !== "";
+    var medioNotificacionIsValid = notificacion.medio !== undefined && notificacion.medio !== null && notificacion.medio !== "";
 
     //Si hay alguna propiedad invalida se actualiza el estado con la validación de cada propiedad
-    if (!descripcionIsValid || !id_CategoriaIsValid || !id_MedioNotificacionIsValid || !id_criterioNotificacionIsValid) {
+    if (!descripcionIsValid || !categoriaIsValid || !medioNotificacionIsValid) {
 
       setValidations(prevState => ({
         ...prevState,
         descripcionIsValid: descripcionIsValid,
-        id_CategoriaIsValid: id_CategoriaIsValid,
-        id_MedioNotificacionIsValid: id_MedioNotificacionIsValid,
-        id_criterioNotificacionIsValid: id_criterioNotificacionIsValid,
-        diasObservacionIsValid: true,
-        modificadorIsValid: true,
-        cantProductosIsValid: true
+        categoriaIsValid: categoriaIsValid,
+        medioNotificacionIsValid: medioNotificacionIsValid,
+        deltaIsValid: true,
+        ultimosDiasIsValid: true,
+        ventanaIsValid: true
       }));
 
     } else {
 
-      console.log(notificacion);
-
       setIsSaving(true);
 
       if (modalABM === 'A') {
-        //Llamada a la API para dar de alta
-        console.log('Request ALTA Notificacion:');
+
+        createNotificacion(notificacion)
+          .then((response) => { onGuardarResponseOk(response) })
+          .catch(error => { onGuardarResponseError(error) });
+
       } else if (modalABM === 'M') {
-        //Llamada a la API para dar de editar
-        console.log('Request EDICION Notificacion:');
+
+        notificacion.idUsuario = auth.getIdUsuario();
+        notificacion.idNotificacion = notificacion.id;
+
+        modificarNotificacion(notificacion)
+          .then((response) => { onGuardarResponseOk(response) })
+          .catch(error => { onGuardarResponseError(error) });
+
       }
-
-      console.log(notificacion);
-
-      setTimeout(() => {
-
-        setIsSaving(false);
-
-        setMessageModal({
-          isOpen: true,
-          severity: "success", //success | error | warning | info
-          title: modalABM === 'A' ? "¡Alta de notificacion exitosa!" : "¡Edición de notificacion exitosa!",
-          message: modalABM === 'A' ? "La configuración  de notificaciones fue dada de alta correctamente." : "La configuración de notificaciones fue actualizada correctamente."
-        });
-
-        console.log('Response ALTA/EDICION Notificacion:');
-        console.log(notificacion);
-
-        //LLamada a la API para recargar el listado de usuarios
-
-        limpiarValidaciones();
-        cerrarFormulario();
-      }, 2000);
     }
   }
 
   const handleEliminar = () => {
 
-    console.log('Request BAJA Notificacion:');
-    console.log(notificacion);
-
     setIsSaving(true);
 
-    //Llamada a la API para dar de eliminar
+console.log(notificacion);
 
-    setTimeout(() => {
-
-      setIsSaving(false);
-
-      setMessageModal({
-        isOpen: true,
-        severity: "success", //success | error | warning | info
-        title: "¡Baja de notificación exitosa!",
-        message: "La configuración de notificaciones fue eliminada correctamente."
-      });
-
-      console.log('Response BAJA Usuario:');
-      console.log(notificacion);
-
-      //LLamada a la API para recargar el listado de usuarios
-
-      limpiarValidaciones();
-      cerrarFormulario();
-    }, 2000);
+    eliminarNotificacion(notificacion.id)
+      .then((response) => { onEliminarResponseOk(response) })
+      .catch(error => { onEliminarResponseError(error) });
   }
 
   const handleCerrar = () => {
@@ -265,74 +362,84 @@ export default function TabNotificaciones(props) {
   return (
     <div>
 
-      {props.data?.notificaciones != null && !props.isLoading &&
+      {!props.isLoading &&
 
         <div>
 
-        <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
-          Configurar mis notificaciones
+          <Typography variant="h4" gutterBottom align="left" style={{ marginBottom: '20px' }}>
+            Configurar mis notificaciones
         </Typography>
 
           <ButtonNuevoContainer maxWidth="lg">
             <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
           </ButtonNuevoContainer>
 
-          <TableContainer component={Paper} className={classes.tableContainer}>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Descripción</StyledTableCell>
-                  <StyledTableCell>Categoría</StyledTableCell>
-                  <StyledTableCell>Medio</StyledTableCell>
-                  <StyledTableCell>Criterio</StyledTableCell>
-                  <StyledTableCell align="center">Acciones</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {notificacionesPaginado.map((notificacion) => (
-                  <StyledTableRow key={notificacion.id}>
-                    <StyledTableCell>{notificacion.descripcion ? notificacion.descripcion : '-'}</StyledTableCell>
-                    <StyledTableCell>{notificacion.categoria ? notificacion.categoria : '-'}</StyledTableCell>
-                    <StyledTableCell>{notificacion.medio_notificacion ? notificacion.medio_notificacion : '-'}</StyledTableCell>
-                    <StyledTableCell>{notificacion.criterio_notificacion ? notificacion.criterio_notificacion : '-'}</StyledTableCell>
-                    <StyledTableCell align="center">
-                      <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
-                      <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))}
+          {props.data != null &&
 
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={5} />
+            <TableContainer component={Paper} className={classes.tableContainer}>
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>Descripción</StyledTableCell>
+                    <StyledTableCell>Categoría</StyledTableCell>
+                    <StyledTableCell align="center">Medio</StyledTableCell>
+                    <StyledTableCell align="center">Variación (%)</StyledTableCell>
+                    <StyledTableCell align="center">Últimos (días)</StyledTableCell>
+                    <StyledTableCell align="center">Ventana Obs. (días)</StyledTableCell>
+                    <StyledTableCell align="center">Acciones</StyledTableCell>
                   </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    colSpan={5}
-                    count={props.data.notificaciones.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    SelectProps={{
-                      inputProps: { 'aria-label': 'Filas por página' },
-                      native: true,
-                    }}
-                    onChangePage={handleChangePage}
-                    rowsPerPageOptions={[rowsPerPage]}
-                    ActionsComponent={PaginationActions}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {notificacionesPaginado.map((notificacion) => (
+                    <StyledTableRow key={notificacion.id}>
+                      <StyledTableCell>{notificacion.descripcion ? notificacion.descripcion : '-'}</StyledTableCell>
+                      <StyledTableCell>{notificacion.categoria ? notificacion.categoria : '-'}</StyledTableCell>
+                      <StyledTableCell align="center">{notificacion.medio ? notificacion.medio : '-'}</StyledTableCell>
+                      <StyledTableCell align="center">{notificacion.delta ? notificacion.delta + '%' : '-'}</StyledTableCell>
+                      <StyledTableCell align="center">{notificacion.ultimosDias ? notificacion.ultimosDias : '-'}</StyledTableCell>
+                      <StyledTableCell align="center">{notificacion.ventana ? notificacion.ventana : '-'}</StyledTableCell>
+                      <StyledTableCell align="center">
+                        <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
+                        <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={7} />
+                    </TableRow>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TablePagination
+                      colSpan={7}
+                      count={props.data.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      SelectProps={{
+                        inputProps: { 'aria-label': 'Filas por página' },
+                        native: true,
+                      }}
+                      onChangePage={handleChangePage}
+                      rowsPerPageOptions={[rowsPerPage]}
+                      ActionsComponent={PaginationActions}
+                    />
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+          }
+
+          {props.data == null && <Alert severity="info" style={{ margin: "20px 0" }}>No se encontraron configuraciones de notificación.</Alert>}
 
           <ModalNotificacion
             isOpen={isModalOpen}
             modalABM={modalABM}
             isSaving={isSaving}
             notificacion={notificacion}
+            categorias={categorias}
             validations={validations}
             handleGuardar={handleGuardar}
             handleEliminar={handleEliminar}
@@ -341,9 +448,9 @@ export default function TabNotificaciones(props) {
             handleMedioNotificacionChange={handleMedioNotificacionChange}
             handleCriterioNotificacionChange={handleCriterioNotificacionChange}
             handleDescripcionChange={handleDescripcionChange}
-            handleDiasObservacion={handleDiasObservacion}
-            handleModificador={handleModificador}
-            handleCantProductos={handleCantProductos}
+            handleDelta={handleDelta}
+            handleUltimosDias={handleUltimosDias}
+            handleVentana={handleVentana}
           />
 
           <MessageModal

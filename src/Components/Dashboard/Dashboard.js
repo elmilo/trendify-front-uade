@@ -47,8 +47,6 @@ export default function Dashboard() {
           onSuccessCallback();
       })
       .catch(error => {
-        console.log('Response Top Consumos:');
-        console.log(error);
         setIsLoadingTopConsumos(false);
         if (onErrorCallback)
           onErrorCallback();

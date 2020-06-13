@@ -91,14 +91,6 @@ export class CargarVentas extends React.Component {
 
     reader.onabort = () => console.log('file reading was aborted')
     
-    // reader.onerror = () => 
-    // { 
-    //   this.setState(prevState => ({
-    //     ...prevState,
-    //     hasFileRead: true
-    //   })); 
-    // }
-    
     reader.onload = (e) => {
 
       const wb = XLSX.read(e.target.result, { type: rABS ? 'binary' : 'array', bookVBA: true });
@@ -141,14 +133,25 @@ export class CargarVentas extends React.Component {
 
         this.setState(prevState => ({
           ...prevState,
-          hasFileRead: true,
           isUploading: false,
+          hasFileRead: true,
           hasUploadResponse: true,
           uploadResponse: dUploadResponse,
           hasUploadErrors: dUploadResponse.consumos && dUploadResponse.consumos.some((c) => !c.success),
           files: []
         }));
 
+      }).catch(error => {
+
+        this.setState(prevState => ({
+          ...prevState,
+          isUploading: false,
+          hasFileRead: true,
+          hasUploadResponse: false,
+          uploadResponse: null,
+          hasUploadErrors: false,
+          files: []
+        }));
       });
   }
 

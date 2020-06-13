@@ -81,8 +81,6 @@ export default function Perfil() {
           onSuccessCallback();
       })
       .catch(error => {
-        console.log('Response Listado usuario:');
-        console.log(error);
         setIsLoadingUsuarios(false);
         if (onErrorCallback)
           onErrorCallback();
@@ -101,8 +99,6 @@ export default function Perfil() {
           onSuccessCallback();
       })
       .catch(error => {
-        console.log('Response Listado notificaciones:');
-        console.log(error);
         setIsLoadingNotificaciones(false);
         if (onErrorCallback)
           onErrorCallback();
@@ -121,8 +117,6 @@ export default function Perfil() {
           onSuccessCallback();
       })
       .catch(error => {
-        console.log('Response Mis datos:');
-        console.log(error);
         setIsLoadingMisDatos(false);
         if (onErrorCallback)
           onErrorCallback();
@@ -158,7 +152,7 @@ export default function Perfil() {
             </Tabs>
           </AppBar>
           <TabPanel value={tabIndex} index={0}>
-            <TabNotificaciones data={notificaciones} isLoading={isLoadingNotificaciones} />
+            <TabNotificaciones data={notificaciones} isLoading={isLoadingNotificaciones} recargarListadoNotificacionesEvent={recargarListadoNotificaciones}/>
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
             <TabUsuarios data={usuarios} isLoading={isLoadingUsuarios} recargarListadoUsuariosEvent={recargarListadoUsuarios} />
