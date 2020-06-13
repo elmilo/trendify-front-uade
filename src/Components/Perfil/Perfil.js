@@ -73,7 +73,7 @@ export default function Perfil() {
 
     setIsLoadingUsuarios(true);
 
-    getListadoUsuarios("111")
+    getListadoUsuarios(auth.getIdCliente())
       .then((dResponse) => {
         setUsuarios(dResponse);
         setIsLoadingUsuarios(false);

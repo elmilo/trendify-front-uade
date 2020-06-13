@@ -20,6 +20,7 @@ import MessageModal from '../Common/MessageModal';
 import { createNuevoUsuario, createModificarUsuario, createEliminarUsuario } from '../../Axios/Axios';
 import PaginationActions from '../Common/PaginationActions';
 import LoadingData from '../Common/LoadingData';
+import auth from '../../ProtectedRoutes/auth';
 
 const ButtonNuevoContainer = styled(Container)({
   textAlign: 'right',
@@ -94,7 +95,7 @@ export default function TabUsuarios(props) {
     setUsuario(usuario);
   };
 
-  const handleAlta = () => { handleABM('A', { idCliente: '111', rol: 'Usuario', pass: '12345678' }) };
+  const handleAlta = () => { handleABM('A', { idCliente: auth.getIdCliente() , rol: 'Usuario', pass: '123456' }) };
 
   const handleEdicion = (usuario) => { handleABM('M', usuario) };
 

@@ -12,44 +12,48 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const NotificationsMenu = (props) => {
 
     const [anchor, setAnchor] = React.useState(null);
-    const [isReadNotifications, setIsReadNotifications] = React.useState(false);
 
     const handleOpenMenu = (event) => {
-        setIsReadNotifications(true);
         setAnchor(event.currentTarget);
     };
 
     const handleCloseMenu = () => setAnchor(null);
 
+    var cantNotificacionesNoLeidas = props.notificaciones?.notificaciones?.filter(not => !not.leido)?.length ?? 0;
+
     return (
         <div>
+            <div>
+                <IconButton color="inherit" onClick={handleOpenMenu} aria-controls="notifications-menu" aria-haspopup="true">
+                    <Badge badgeContent={cantNotificacionesNoLeidas}
+                            invisible={cantNotificacionesNoLeidas <= 0} color="secondary">
+                        <NotificationsIcon />
+                    </Badge>
+                </IconButton>
 
-            {props.notificaciones &&
-                <div>
-                    <IconButton color="inherit" onClick={handleOpenMenu} aria-controls="notifications-menu" aria-haspopup="true">
-                        {!isReadNotifications && <Badge badgeContent={props.notificaciones.notificaciones.lenght} color="secondary"><NotificationsIcon /></Badge>}
-                        {isReadNotifications && <NotificationsIcon />}
-                    </IconButton>
+                <Menu id="notifications-menu"
+                    anchorEl={anchor}
+                    keepMounted
+                    open={Boolean(anchor)}
+                    onClose={handleCloseMenu}>
 
-                    <Menu id="notifications-menu"
-                        anchorEl={anchor}
-                        keepMounted
-                        open={Boolean(anchor)}
-                        onClose={handleCloseMenu}
-                    >
-                        {!props.isLoading && props.notificaciones.notificaciones.map((notificacion, index) =>
-                            <MenuItem key={"userNotification" + index}>
-                                <ListItemIcon>
-                                    <NotificationImportantIcon fontSize="small" />
-                                </ListItemIcon>
-                                <Typography variant="inherit">{notificacion.mensaje}</Typography>
-                            </MenuItem>
-                        )}
-                    </Menu>
-                </div>
-            }
+                    {!props.isLoading && props.notificaciones && props.notificaciones.notificaciones.map((notificacion, index) =>
+                        <MenuItem key={"userNotification" + index}>
+                            <ListItemIcon>
+                                <NotificationImportantIcon fontSize="small" />
+                            </ListItemIcon>
+                            {notificacion.leido && <Typography variant="inherit">{notificacion.mensaje}</Typography>}
+                            {!notificacion.leido && <Typography variant="inherit"><b>{notificacion.mensaje}</b></Typography>}
+                        </MenuItem>
+                    )}
 
-            {!props.notificaciones && props.isLoading && <CircularProgress size={18} color="secondary" />}
+                    {props.isLoading &&
+                        <MenuItem>
+                            <Typography variant="inherit"><CircularProgress size={18} color="secondary" />  Actualizando notificaciones...</Typography>
+                        </MenuItem>
+                    }
+                </Menu>
+            </div>
         </div>
     );
 }

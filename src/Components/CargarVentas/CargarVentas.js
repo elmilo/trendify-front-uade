@@ -47,6 +47,7 @@ export class CargarVentas extends React.Component {
 
     this.state = {
       files: [],
+      hasFileRead: false,
       isUploading: false,
       hasUploadResponse: false,
       hasUploadErrors: false,
@@ -90,13 +91,13 @@ export class CargarVentas extends React.Component {
 
     reader.onabort = () => console.log('file reading was aborted')
     
-    reader.onerror = () => 
-    { 
-      this.setState(prevState => ({
-        ...prevState,
-        hasFileRead: true
-      })); 
-    }
+    // reader.onerror = () => 
+    // { 
+    //   this.setState(prevState => ({
+    //     ...prevState,
+    //     hasFileRead: true
+    //   })); 
+    // }
     
     reader.onload = (e) => {
 
@@ -140,6 +141,7 @@ export class CargarVentas extends React.Component {
 
         this.setState(prevState => ({
           ...prevState,
+          hasFileRead: true,
           isUploading: false,
           hasUploadResponse: true,
           uploadResponse: dUploadResponse,
