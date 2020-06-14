@@ -1,5 +1,4 @@
 import React from 'react';
-import Linka from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,9 +10,9 @@ import LoadingData from '../Common/LoadingData';
 import Title from './Title';
 
 const useStyles = makeStyles((theme) => ({
-  seeMore: {
-    marginTop: theme.spacing(3),
-  },
+  table: {
+    overflowX: "auto"
+  }
 }));
 
 export default function Orders(props) {
@@ -24,7 +23,7 @@ export default function Orders(props) {
       {props.topConsumos === null && <LoadingData message="Obteniendo productos..." />}
       {props.topConsumos !== null && props.topConsumos.consumos.length <= 0 && <Alert severity="info">No se encontraron productos.</Alert> }
       {props.topConsumos !== null && props.topConsumos.consumos.length > 0 &&
-        <div>
+        <div class={classes.table}>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -43,9 +42,6 @@ export default function Orders(props) {
               ))}
             </TableBody>
           </Table>
-          <div className={classes.seeMore}>
-            <Linka color="primary" href="#">Mostrar más...</Linka>
-          </div>
         </div>
       }
     </React.Fragment>

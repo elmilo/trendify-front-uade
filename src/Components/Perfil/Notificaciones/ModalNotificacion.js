@@ -41,7 +41,7 @@ export default function ModalUsuario(props) {
 
     <div>
 
-      {props.isOpen &&
+      {props.isOpen && props.categorias &&
 
         <Dialog
           open={props.isOpen}
@@ -91,7 +91,7 @@ export default function ModalUsuario(props) {
                         onChange={(e) => props.handleCategoriaChange(e.target?.value)}
                         label="Categoría">
 
-                        {props.categorias.sort().map((categoria, index) => (
+                        {props.categorias?.sort().map((categoria, index) => (
                           <MenuItem key={"ddl-categoria-" + index} value={categoria.toUpperCase()}>{categoria.toUpperCase()}</MenuItem>
                         ))}
 
