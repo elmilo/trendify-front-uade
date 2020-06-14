@@ -9,6 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import MessageModal from '../Common/MessageModal';
 import LoadingData from '../Common/LoadingData';
 import { createModificarUsuario } from '../../Axios/Axios';
+import auth from "../../ProtectedRoutes/auth";
 
 const ButtonContainer = styled(Container)({
   textAlign: 'center',
@@ -69,7 +70,7 @@ export default function TabPerfil(props) {
     var emailIsValid = true;
     var telIsValid = true;
 
-    if (!misDatos) {
+    if (misDatos === null || misDatos === undefined) {
       setMisDatos(props.data);
       emailIsValid = props.data != null && props.data.email !== undefined && props.data.email !== null && props.data.email !== "";
       telIsValid = props.data != null && props.data.tel !== undefined && props.data.tel !== null && props.data.tel !== "";
@@ -93,15 +94,12 @@ export default function TabPerfil(props) {
 
       var request = {
         ...misDatos,
-        idUsuario: props.data.idUsuario,
+        idUsuario: auth.getIdUsuario(),
         nombre: props.data.nombre,
         apellido: props.data.apellido,
         pass: props.data.pass,
         rol: props.data.rol
       }
-
-      console.log('Request GUARDAR MIS DATOS:');
-      console.log(request);
 
       createModificarUsuario(request)
         .then((response) => { onGuardarResponseOk(response); })
@@ -110,9 +108,6 @@ export default function TabPerfil(props) {
   }
 
   const onGuardarResponseOk = (response) => {
-
-    console.log('Response GUARDAR MIS DATOS:');
-    console.log(response);
 
     setMessageModal({
       isOpen: true,
@@ -131,10 +126,6 @@ export default function TabPerfil(props) {
   }
 
   const onGuardarResponseError = (error) => {
-
-    console.log('Response GUARDAR MIS DATOS:');
-    console.log(error);
-
     setMessageModal({
       isOpen: true,
       severity: "error",

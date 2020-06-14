@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Alert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
   closeButton: {
@@ -43,7 +44,14 @@ export default function ModalUsuario({ messageModal, handleCerrar }) {
             </IconButton>
           </MuiDialogTitle>
           <DialogContent dividers>
-            <Alert severity={messageModal.severity}>{messageModal.message}</Alert>
+
+            {messageModal.isLoading && 
+              <Typography variant="subtitle1">
+                <CircularProgress size={18} color="secondary"/>
+                <span style={{marginLeft: "15px"}}>{messageModal.message}</span>
+            </Typography>}
+
+            {!messageModal.isLoading && <Alert severity={messageModal.severity}>{messageModal.message}</Alert>}
           </DialogContent>
         </Dialog>
       }

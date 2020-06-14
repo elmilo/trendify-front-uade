@@ -1,6 +1,5 @@
 import axios from "axios";
 import dataTopNotificacionesUsuarioResponse from "../Assets/dataTopNotificacionesUsuarioResponse";
-const TRENDIFY_ENDPOINT = "https://seminario-back.herokuapp.com/app/";
 
 let config = {
   headers: {
@@ -125,6 +124,24 @@ export const getNotificacion = (idNotificacion) => {
 };
 
 export const getListadoNotificaciones = (idUsuario) => {
+  return axios
+    .get("/getNotificacionesPorUsuario/" + idUsuario, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+export const enviarNotificacion = (rawdata) => {
+  return axios
+    .get("/getNotificacionesPorUsuario/" + rawdata.idUsuario, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
+export const procesarNotificaciones = (idUsuario) => {
   return axios
     .get("/getNotificacionesPorUsuario/" + idUsuario, null, config)
     .then((response) => {

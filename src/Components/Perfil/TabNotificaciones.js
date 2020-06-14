@@ -16,20 +16,27 @@ import { styled } from '@material-ui/core/styles';
 import ModalNotificacion from "./Notificaciones/ModalNotificacion";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SendIcon from '@material-ui/icons/Send';
 import MessageModal from '../Common/MessageModal';
 import PaginationActions from '../Common/PaginationActions';
 import LoadingData from '../Common/LoadingData';
 import Alert from '@material-ui/lab/Alert';
-import { getCategorias, createNotificacion, modificarNotificacion, eliminarNotificacion } from '../../Axios/Axios';
+import { getCategorias, createNotificacion, modificarNotificacion, eliminarNotificacion, enviarNotificacion, procesarNotificaciones } from '../../Axios/Axios';
 import auth from '../../ProtectedRoutes/auth';
 
-const ButtonNuevoContainer = styled(Container)({
+const ButtonsContainer = styled(Container)({
   textAlign: 'right',
-  padding: 0
+  padding: 0  
 });
 
 const NuevoButton = styled(Button)({
   'border-radius': '0.2rem !important',
+   margin: '0 5px'
+});
+
+const ProcesarButton = styled(Button)({
+  'border-radius': '0.2rem !important',
+   margin: '0 5px'
 });
 
 const StyledTableCell = withStyles((theme) => ({
@@ -298,6 +305,42 @@ export default function TabNotificaciones(props) {
     });
   }
 
+  const onEnviarResponseOk = (response) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "success", //success | error | warning | info
+      title: "¡Envío de prueba de notificación exitosa!",
+      message: "El envío se realizó correctamente. Verifique que haya recibido el SMS o Email correspondiente."
+    });
+  }
+
+  const onEnviarResponseError = (error) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "error",
+      title: "Envío de prueba de notificación errónea",
+      message: "Oops! Ocurrió un error al realizar el envío de la notificación."
+    });
+  }
+
+  const onProcesarResponseOk = (response) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "success", //success | error | warning | info
+      title: "¡Proceso de envío de notificaciones exitoso!",
+      message: "El envío de notificaciones se realizó correctamente."
+    });
+  }
+
+  const onProcesarResponseError = (error) => {
+    setMessageModal({
+      isOpen: true,
+      severity: "error",
+      title: "Proceso de envío de notificaciones erróneo",
+      message: "Oops! Ocurrió un error al procesar el envío de notificaciones."
+    });
+  }
+
   const handleGuardar = () => {
 
     //Se validan todas las propiedades
@@ -345,12 +388,38 @@ export default function TabNotificaciones(props) {
 
     setIsSaving(true);
 
-console.log(notificacion);
-
     eliminarNotificacion(notificacion.id)
       .then((response) => { onEliminarResponseOk(response) })
       .catch(error => { onEliminarResponseError(error) });
   }
+
+  const handleEnviar = (notificacion) => {
+    
+      setMessageModal({
+        isOpen: true,
+        isLoading: true,
+        title: "¡Enviando prueba de notificación!",
+        message: "Por favor, aguarde mientras se realiza el envío..."
+      });
+
+      enviarNotificacion({ idUsuario: auth.getIdUsuario(), idNotificacion: notificacion.id })
+        .then((response) => { onEnviarResponseOk(response) })
+        .catch(error => { onEnviarResponseError(error) });
+  }
+
+  const handleProcesar = () => {
+    
+    setMessageModal({
+      isOpen: true,
+      isLoading: true,
+      title: "¡Procesando envío de notificaciones!",
+      message: "Esta acción puede demorar unos minutos, por favor aguarde mientras se realiza el envío..."
+    });
+
+    procesarNotificaciones(auth.getIdUsuario())
+      .then((response) => { onProcesarResponseOk(response) })
+      .catch(error => { onProcesarResponseError(error) });
+}
 
   const handleCerrar = () => {
     limpiarValidaciones();
@@ -370,9 +439,10 @@ console.log(notificacion);
             Configurar mis notificaciones
         </Typography>
 
-          <ButtonNuevoContainer maxWidth="lg">
+          <ButtonsContainer>
+            <ProcesarButton variant="contained" color="secondary" onClick={handleProcesar}>Procesar</ProcesarButton>
             <NuevoButton variant="contained" color="primary" onClick={handleAlta}>Nuevo</NuevoButton>
-          </ButtonNuevoContainer>
+          </ButtonsContainer>
 
           {props.data != null &&
 
@@ -399,6 +469,7 @@ console.log(notificacion);
                       <StyledTableCell align="center">{notificacion.ultimosDias ? notificacion.ultimosDias : '-'}</StyledTableCell>
                       <StyledTableCell align="center">{notificacion.ventana ? notificacion.ventana : '-'}</StyledTableCell>
                       <StyledTableCell align="center">
+                        <SendIcon onClick={() => handleEnviar(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
                         <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
                         <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
                       </StyledTableCell>

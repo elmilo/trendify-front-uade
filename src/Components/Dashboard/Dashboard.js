@@ -39,7 +39,7 @@ export default function Dashboard() {
     var month = String(today.getMonth() + 1).padStart(2, '0');
     var year = today.getFullYear();
 
-    getTopConsumos(auth.getIdCliente(), day, /*month*/ '05', year)
+    getTopConsumos(auth.getIdCliente(), '30'/*day*/, /*month*/ '05', year)
       .then((dResponse) => {
         setTopConsumos(dResponse);
         setIsLoadingTopConsumos(false);
