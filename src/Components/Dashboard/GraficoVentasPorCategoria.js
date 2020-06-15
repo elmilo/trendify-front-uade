@@ -4,7 +4,7 @@ import Alert from '@material-ui/lab/Alert';
 import LoadingData from '../Common/LoadingData';
 import Title from './Title';
 
-export default function GraficoProductosCategoria(props) {
+export default function GraficoVentasCategoria(props) {
 
   var ventas = null;
   var categorias = [];
