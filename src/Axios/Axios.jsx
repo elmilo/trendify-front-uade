@@ -143,9 +143,8 @@ export const getListadoNotificaciones = (idUsuario) => {
 
 export const enviarNotificacion = (rawdata) => {
   return axios
-    .get("/getNotificacionesPorUsuario/" + rawdata.idUsuario, null, config)
+    .get("/enviarNotificacion/" + rawdata.idNotificacion, null, config)
     .then((response) => {
-      //console.log(response);
       return response.data;
   });
 };
