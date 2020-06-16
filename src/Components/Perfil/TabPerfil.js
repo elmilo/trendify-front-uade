@@ -69,7 +69,7 @@ export default function TabPerfil(props) {
 
     var emailIsValid = true;
     var telIsValid = true;
-
+    console.log("ex: ", misDatos);
     if (misDatos === null || misDatos === undefined) {
       setMisDatos(props.data);
       emailIsValid = props.data != null && props.data.email !== undefined && props.data.email !== null && props.data.email !== "";
@@ -78,7 +78,7 @@ export default function TabPerfil(props) {
       emailIsValid = misDatos != null && misDatos.email !== undefined && misDatos.email !== null && misDatos.email !== "";
       telIsValid = misDatos != null && misDatos.tel !== undefined && misDatos.tel !== null && misDatos.tel !== "";
     }
-
+    console.log("pos: ", misDatos);
     //Si hay alguna propiedad invalida se actualiza el estado con la validación de cada propiedad
     if (!emailIsValid || !telIsValid) {
 

@@ -8,6 +8,7 @@ import GraficoVentasCategoria from "./GraficoVentasCategoria";
 import { getCategorias, getVentasPorDiaPorCategoria } from '../../Axios/Axios';
 import auth from '../../ProtectedRoutes/auth';
 import SeleccionFiltros from "./SeleccionFiltros.js";
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -104,6 +105,7 @@ export default function Tendencias() {
 
             {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
               <Paper className={fixedHeightPaper}>
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>Índice T1</Typography>
                 
               </Paper>
             }
@@ -113,7 +115,7 @@ export default function Tendencias() {
 
             {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
               <Paper className={fixedHeightPaper}>
-                
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>Variación ventas</Typography>
               </Paper>
             }
 

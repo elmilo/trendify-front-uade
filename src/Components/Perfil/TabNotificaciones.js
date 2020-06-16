@@ -23,6 +23,7 @@ import LoadingData from '../Common/LoadingData';
 import Alert from '@material-ui/lab/Alert';
 import { getCategorias, createNotificacion, modificarNotificacion, eliminarNotificacion, enviarNotificacion, procesarNotificaciones } from '../../Axios/Axios';
 import auth from '../../ProtectedRoutes/auth';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const ButtonsContainer = styled(Container)({
   textAlign: 'right',
@@ -469,9 +470,15 @@ export default function TabNotificaciones(props) {
                       <StyledTableCell align="center">{notificacion.ultimosDias ? notificacion.ultimosDias : '-'}</StyledTableCell>
                       <StyledTableCell align="center">{notificacion.ventana ? notificacion.ventana : '-'}</StyledTableCell>
                       <StyledTableCell align="center">
-                        <SendIcon onClick={() => handleEnviar(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
-                        <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
-                        <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
+                        <Tooltip title="Editar">
+                          <EditIcon onClick={() => handleEdicion(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />
+                        </Tooltip>
+                        <Tooltip title="Eliminar">
+                          <DeleteIcon onClick={() => handleBaja(notificacion)} style={{ margin: '0 5px', cursor: 'pointer' }} />
+                        </Tooltip>
+                        <Tooltip title="Envío de prueba">
+                          <SendIcon onClick={() => handleEnviar(notificacion)} variant="contained" style={{ margin: '0 5px', cursor: 'pointer' }} />                          
+                        </Tooltip>
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}
