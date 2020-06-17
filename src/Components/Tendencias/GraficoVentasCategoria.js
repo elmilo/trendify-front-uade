@@ -37,7 +37,7 @@ export default function GraficoVentasCategoria(props) {
     <React.Fragment>
       <Typography component="h2" variant="h6" color="primary" gutterBottom>Ventas de la categoría '{props.categoriaSeleccionada}'</Typography>
 
-      {ventas === null && props.isLoading && <LoadingData message="Obteniendo ventas..." />}
+      {props.isLoading && <LoadingData message="Obteniendo ventas..." />}
       {ventas !== null && ventas.length <= 0 && !props.isLoading && <Alert severity="info">No se encontraron ventas para los filtros ingresados.</Alert>}
       {ventas !== null && ventas.length > 0 && !props.isLoading &&
         <ResponsiveContainer>

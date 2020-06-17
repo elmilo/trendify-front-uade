@@ -27,7 +27,8 @@ const GuardarButton = styled(Button)({
 
 export default function TabPerfil(props) {
 
-  const [misDatos, setMisDatos] = React.useState(null);
+  const [email, setEmail] = React.useState(null);
+  const [telefono, setTelefono] = React.useState(null);
   const [isSaving, setIsSaving] = React.useState(false);
   const [validations, setValidations] = React.useState({
     emailIsValid: true,
@@ -41,22 +42,25 @@ export default function TabPerfil(props) {
     message: "Los datos del usuario fueron actualizados correctamente"
   });
 
-  const setFormInputChange = (prop, value, isValidProp) => {
+  const handleEmailChange = (value) => { 
 
     setValidations(prevState => ({
       ...prevState,
-      [isValidProp]: true
+      emailIsValid: true
     }));
 
-    setMisDatos(prevState => ({
+    setEmail(value);
+  };
+
+  const handleTelefonoChange = (value) => { 
+
+    setValidations(prevState => ({
       ...prevState,
-      [prop]: value
+      telIsValid: true
     }));
-  }
 
-  const handleEmailChange = (value) => { setFormInputChange('email', value, 'emailIsValid') };
-
-  const handleTelefonoChange = (value) => { setFormInputChange('tel', value, 'telIsValid') };
+    setTelefono(value);
+  };
 
   const limpiarValidaciones = () => {
     setValidations({
@@ -69,16 +73,19 @@ export default function TabPerfil(props) {
 
     var emailIsValid = true;
     var telIsValid = true;
-    console.log("ex: ", misDatos);
-    if (misDatos === null || misDatos === undefined) {
-      setMisDatos(props.data);
-      emailIsValid = props.data != null && props.data.email !== undefined && props.data.email !== null && props.data.email !== "";
-      telIsValid = props.data != null && props.data.tel !== undefined && props.data.tel !== null && props.data.tel !== "";
-    } else {
-      emailIsValid = misDatos != null && misDatos.email !== undefined && misDatos.email !== null && misDatos.email !== "";
-      telIsValid = misDatos != null && misDatos.tel !== undefined && misDatos.tel !== null && misDatos.tel !== "";
+    
+    if(telefono === null || telefono === undefined){
+      setTelefono(props.data.tel);
+    }else{
+      telIsValid = telefono !== "";
     }
-    console.log("pos: ", misDatos);
+
+    if(email === null || email === undefined){
+      setEmail(props.data.email);
+    }else{
+      emailIsValid = email !== "";
+    }
+    
     //Si hay alguna propiedad invalida se actualiza el estado con la validación de cada propiedad
     if (!emailIsValid || !telIsValid) {
 
@@ -93,12 +100,10 @@ export default function TabPerfil(props) {
       setIsSaving(true);
 
       var request = {
-        ...misDatos,
+        ...props.data,
         idUsuario: auth.getIdUsuario(),
-        nombre: props.data.nombre,
-        apellido: props.data.apellido,
-        pass: props.data.pass,
-        rol: props.data.rol
+        tel: telefono ?? props.data.tel,
+        email: email ?? props.data.email
       }
 
       createModificarUsuario(request)

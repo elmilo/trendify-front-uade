@@ -403,7 +403,7 @@ export default function TabNotificaciones(props) {
         message: "Por favor, aguarde mientras se realiza el envío..."
       });
 
-      enviarNotificacion({ idNotificacion: notificacion.id })
+      enviarNotificacion(notificacion.id)
         .then((response) => { onEnviarResponseOk(response) })
         .catch(error => { onEnviarResponseError(error) });
   }

@@ -86,7 +86,7 @@ export const getListadoUsuarios = (idCliente) => {
 
 export const getTopNotificacionesUsuario = (idUsuario) => {
   return axios
-    .get("/listadoUsuarios/" + idUsuario, null, config)
+    .get("/getMensajes/" + idUsuario, null, config)
     .then((response) => {
       //console.log(response);
       return dataTopNotificacionesUsuarioResponse;
@@ -141,9 +141,9 @@ export const getListadoNotificaciones = (idUsuario) => {
   });
 };
 
-export const enviarNotificacion = (rawdata) => {
+export const enviarNotificacion = (idNotificacion) => {
   return axios
-    .get("/enviarNotificacion/" + rawdata.idNotificacion, null, config)
+    .get("/enviarNotificacion/" + idNotificacion, null, config)
     .then((response) => {
       return response.data;
   });
