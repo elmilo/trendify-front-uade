@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const urlApi = "https://seminario-back.herokuapp.com/app/";
+const urlApi = "https://seminario-back.herokuapp.com/app";
 
 let config = {
   headers: {
