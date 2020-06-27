@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const urlApi = "https://seminario-back.herokuapp.com/app";
-
 let config = {
   headers: {
     'Content-Type': 'application/json',
@@ -182,7 +180,7 @@ export const procesarNotificaciones = (idUsuario) => {
 
 export const getLogin = (email, password) => {
   return axios
-    .post(`${urlApi}/login/`, { email: email, pass: password }, config)
+    .post("/login/", { email: email, pass: password }, config)
     .then((response) => {
       //console.log(response);
       return response.data;

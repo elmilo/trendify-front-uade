@@ -1,5 +1,6 @@
 {
   "name": "trendify",
+  "proxy": "https://seminario-back.herokuapp.com/app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
