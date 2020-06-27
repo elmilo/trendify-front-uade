@@ -8,6 +8,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Typography from '@material-ui/core/Typography';
 import NotificationImportantIcon from '@material-ui/icons/NotificationImportant';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { setNotificacionUsuarioLeida } from '../../Axios/Axios';
 
 const NotificationsMenu = (props) => {
 
@@ -15,6 +16,16 @@ const NotificationsMenu = (props) => {
 
     const handleOpenMenu = (event) => {
         setAnchor(event.currentTarget);
+
+        if (props.notificaciones && props.notificaciones.length > 0) {
+
+            props.notificaciones.forEach(notificacion => {
+                if (!notificacion.leido) {
+                    notificacion.leido = true;
+                    setNotificacionUsuarioLeida(notificacion.id);
+                }
+            });
+        }
     };
 
     const handleCloseMenu = () => setAnchor(null);
@@ -37,7 +48,7 @@ const NotificationsMenu = (props) => {
                     open={Boolean(anchor)}
                     onClose={handleCloseMenu}>
 
-                    {!props.isLoading && props.notificaciones && props.notificaciones.notificaciones.map((notificacion, index) =>
+                    {!props.isLoading && props.notificaciones.length > 0 && props.notificaciones.map((notificacion, index) =>
                         <MenuItem key={"userNotification" + index}>
                             <ListItemIcon>
                                 <NotificationImportantIcon fontSize="small" />
@@ -46,6 +57,12 @@ const NotificationsMenu = (props) => {
                             {!notificacion.leido && <Typography variant="inherit"><b>{notificacion.mensaje}</b></Typography>}
                         </MenuItem>
                     )}
+
+                    {!props.isLoading && props.notificaciones.length === 0 &&
+                        <MenuItem key={"noUserNotification"}>
+                            No hay notificaciones.
+                        </MenuItem>
+                    }
 
                     {props.isLoading &&
                         <MenuItem>

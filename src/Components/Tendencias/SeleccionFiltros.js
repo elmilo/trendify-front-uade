@@ -30,6 +30,24 @@ export default function SeleccionFiltros(props) {
           </FormControl>
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
+        <FormControl
+            fullWidth
+            disabled={props.isLoadingProductos}
+            variant="outlined">
+            <InputLabel id="producto-ddl-lable">Producto</InputLabel>
+            <Select
+              labelId="producto-ddl-lable"
+              id="producto-ddl"
+              value={props.filtros?.producto ?? ''}
+              onChange={(e) => props.handleProductoChange(e.target?.value)}
+              label="Producto">
+
+              {props.productos?.sort().map((producto, index) => (
+                <MenuItem key={"ddl-producto-" + index} value={producto.nombre.toUpperCase() + '|' + producto.codigo}>{producto.nombre.toUpperCase()}</MenuItem>
+              ))}
+
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
         </Grid>

@@ -36,6 +36,15 @@ export const getVentasPorDiaPorCategoria = (idCliente) => {
   });
 };
 
+export const getVentasPorDiaPorProducto = (idCliente, idProducto) => {
+  return axios
+    .get("/getConsumosPorClienteYProducto/" + idCliente + '/' + idProducto, null, config)
+    .then((response) => {
+      console.log(response);
+      return response.data;
+  });
+};
+
 /* #endregion CONSUMOS */
 /* #region USUARIOS */
 
@@ -89,7 +98,16 @@ export const getTopNotificacionesUsuario = (idUsuario) => {
     .get("/getMensajes/" + idUsuario, null, config)
     .then((response) => {
       //console.log(response);
-      return dataTopNotificacionesUsuarioResponse;
+      return response.data;
+  });
+};
+
+export const setNotificacionUsuarioLeida = (idNotificacion) => {
+  return axios
+    .get("/setMensajeLeido/" + idNotificacion, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
   });
 };
 
@@ -105,11 +123,10 @@ export const createNotificacion = (rawdata) => {
 };
 
 export const modificarNotificacion = (rawdata) => {
-  console.log(rawdata);
   return axios
     .post("/modificarNotificacion/", rawdata, config)
     .then((response) => {
-      console.log(response);
+      //console.log(response);
       return response.data;
   });
 };
@@ -151,7 +168,7 @@ export const enviarNotificacion = (idNotificacion) => {
 
 export const procesarNotificaciones = (idUsuario) => {
   return axios
-    .get("/getNotificacionesPorUsuario/" + idUsuario, null, config)
+    .get("/correrProcesoParaUsuario/" + idUsuario, null, config)
     .then((response) => {
       //console.log(response);
       return response.data;
@@ -182,60 +199,13 @@ export const getCategorias = () => {
   });
 };
 
+export const getProductosPorCategoria = (categoria) => {
+  return axios
+    .get("/getProductosPorCategoria/" + categoria, null, config)
+    .then((response) => {
+      //console.log(response);
+      return response.data;
+  });
+};
+
 /* #endregion COMMON */
-
-export const getTrendData = (parameter) => {
-  /*return axios
-      .get(TRENDIFY_ENDPOINT + "/feriados/" + anio)
-      .then(response => {
-        //console.log("axios response.data " + response.data);
-        return response.data;
-      });*/
-  function createData(time, amount) {
-    return { time, amount };
-  }
-  const response = [
-    createData("17/04", Math.floor(Math.random() * parameter)),
-    createData("18/04", Math.floor(Math.random() * parameter)),
-    createData("19/04", Math.floor(Math.random() * parameter)),
-    createData("20/04", Math.floor(Math.random() * parameter)),
-    createData("21/04", Math.floor(Math.random() * parameter)),
-    createData("22/04", Math.floor(Math.random() * parameter)),
-    createData("23/04", Math.floor(Math.random() * parameter)),
-    createData("24/04", Math.floor(Math.random() * parameter)),
-    createData("25/04", Math.floor(Math.random() * parameter)),
-  ];
-
-  return response;
-};
-
-export const getProductosPorCategoria = (parameter) => {
-  
-
-  
-
-  return [
-    {
-      name: 'Page A', uv: 4000, pv: 2400, amt: 2400,
-    },
-    {
-      name: 'Page B', uv: 3000, pv: 1398, amt: 2210,
-    },
-    {
-      name: 'Page C', uv: 2000, pv: 9800, amt: 2290,
-    },
-    {
-      name: 'Page D', uv: 2780, pv: 3908, amt: 2000,
-    },
-    {
-      name: 'Page E', uv: 1890, pv: 4800, amt: 2181,
-    },
-    {
-      name: 'Page F', uv: 2390, pv: 3800, amt: 2500,
-    },
-    {
-      name: 'Page G', uv: 3490, pv: 4300, amt: 2100,
-    },
-  ];
-};
-

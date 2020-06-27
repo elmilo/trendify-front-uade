@@ -15,11 +15,11 @@ export default function GraficoVentasCategoria(props) {
     ventas = [];
     props.ventasPorCategoria.forEach((ventaPorCategoria) => {
 
-      var fecha = ventaPorCategoria.fecha.split("-")[2];
+      var fecha = ventaPorCategoria.fecha.split("-")[2] + '/' + ventaPorCategoria.fecha.split("-")[1];
 
       if(!ventas.some(v => v.name === fecha)){
 
-        var model = { name: fecha };
+        var model = { fecha: fecha };
 
         ventaPorCategoria.detalleCategoria.forEach((detalleCategoria) => {
 
@@ -37,7 +37,7 @@ export default function GraficoVentasCategoria(props) {
 
   return (
     <React.Fragment>
-      <Title>Cantidad de ventas por categoría</Title>
+      <Title>Ventas por Categoría</Title>
 
       {ventas === null && <LoadingData message="Obteniendo ventas por categoría..." />}
       {ventas !== null && ventas.length <= 0 && <Alert severity="info">No se encontraron ventas.</Alert>}
@@ -52,8 +52,8 @@ export default function GraficoVentasCategoria(props) {
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" allowDataOverflow/>
-            <YAxis/>
+            <XAxis dataKey="fecha" allowDataOverflow/>
+            <YAxis unit=" u."/>
             <Tooltip />
             <Legend />
 

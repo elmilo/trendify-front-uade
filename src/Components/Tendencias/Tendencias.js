@@ -5,7 +5,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import GraficoVentasCategoria from "./GraficoVentasCategoria";
-import { getCategorias, getVentasPorDiaPorCategoria } from '../../Axios/Axios';
+import GraficoVentasProducto from "./GraficoVentasProducto";
+import { getCategorias, getVentasPorDiaPorCategoria, getVentasPorDiaPorProducto, getProductosPorCategoria } from '../../Axios/Axios';
 import auth from '../../ProtectedRoutes/auth';
 import SeleccionFiltros from "./SeleccionFiltros.js";
 import Typography from '@material-ui/core/Typography';
@@ -36,15 +37,30 @@ export default function Tendencias() {
 
   const handleCategoriaChange = (value) => {
     setFormInputChange('categoria', value);
+    recargarProductos(value);
     recargarVentasPorCategoria();
   }
 
+  const handleProductoChange = (value) => {
+    setFormInputChange('producto', value);
+    recargarVentasPorProducto(value.split('|')[1]);
+  }
+
+  //State Combo de Categorías
   const [isLoadingCategorias, setIsLoadingCategorias] = React.useState(false);
   const [categorias, setCategorias] = React.useState(null);
+
+  //State Combo de Productos
+  const [isLoadingProductos, setIsLoadingProductos] = React.useState(true);
+  const [productos, setProductos] = React.useState(null);
 
   //State Ventas por Categoria
   const [isLoadingVentasPorCategoria, setIsLoadingVentasPorCategoria] = React.useState(false);
   const [ventasPorCategoria, setVentasPorCategoria] = React.useState(null);
+
+  //State Ventas por Producto
+  const [isLoadingVentasPorProducto, setIsLoadingVentasPorProducto] = React.useState(false);
+  const [ventasPorProducto, setVentasPorProducto] = React.useState(null);
 
   const recargarCategorias = (onSuccessCallback, onErrorCallback) => {
 
@@ -59,6 +75,24 @@ export default function Tendencias() {
       })
       .catch(error => {
         setIsLoadingCategorias(false);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
+  const recargarProductos = (categoria, onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingProductos(true);
+
+    getProductosPorCategoria(categoria)
+      .then((response) => {
+        setProductos(response);
+        setIsLoadingProductos(false);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        setIsLoadingProductos(false);
         if (onErrorCallback)
           onErrorCallback();
       });
@@ -82,6 +116,24 @@ export default function Tendencias() {
       });
   }
 
+  const recargarVentasPorProducto = (producto, onSuccessCallback, onErrorCallback) => {
+
+    setIsLoadingVentasPorProducto(true);
+
+    getVentasPorDiaPorProducto(auth.getIdCliente(), producto)
+      .then((response) => {
+        setVentasPorProducto(response);
+        setIsLoadingVentasPorProducto(false);
+        if (onSuccessCallback)
+          onSuccessCallback();
+      })
+      .catch(error => {
+        setIsLoadingVentasPorProducto(false);
+        if (onErrorCallback)
+          onErrorCallback();
+      });
+  }
+
   if (categorias === null && !isLoadingCategorias) {
     recargarCategorias();
   }
@@ -94,37 +146,42 @@ export default function Tendencias() {
         <Grid container spacing={3}>
           <Grid item md={12} lg={12}>
             <Paper className={classes.paper}>
-              <SeleccionFiltros 
-                filtros={filtros} 
-                categorias={categorias} 
+              <SeleccionFiltros
+                filtros={filtros}
+                categorias={categorias}
                 isLoadingCategorias={isLoadingCategorias}
-                handleCategoriaChange={handleCategoriaChange} />
+                handleCategoriaChange={handleCategoriaChange}
+                productos={productos}
+                isLoadingProductos={isLoadingProductos}
+                handleProductoChange={handleProductoChange} />
             </Paper>
           </Grid>
-          <Grid item md={6} lg={6}>
-
-            {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
+          {(ventasPorProducto != null || isLoadingVentasPorProducto) &&
+            <Grid item md={8} lg={8}>
+              <Paper className={fixedHeightPaper}>
+                {(ventasPorProducto != null || isLoadingVentasPorProducto) &&
+                  <GraficoVentasProducto
+                    productoSeleccionado={filtros?.producto?.split('|')[0]}
+                    ventasPorProducto={ventasPorProducto}
+                    isLoading={isLoadingVentasPorProducto} />
+                }
+              </Paper>
+            </Grid>
+          }
+          {(ventasPorProducto != null || isLoadingVentasPorProducto) &&
+            <Grid item md={4} lg={4}>
               <Paper className={fixedHeightPaper}>
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>Índice T1</Typography>
-                
               </Paper>
-            }
-
-          </Grid>
-          <Grid item md={6} lg={6}>
-
-            {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
-              <Paper className={fixedHeightPaper}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>Variación ventas</Typography>
-              </Paper>
-            }
-
-          </Grid>
+            </Grid>}
           <Grid item md={12} lg={12}>
 
             {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
               <Paper className={fixedHeightPaper}>
-                <GraficoVentasCategoria categoriaSeleccionada={filtros?.categoria} ventasPorCategoria={ventasPorCategoria} isLoading={isLoadingVentasPorCategoria} />
+                <GraficoVentasCategoria
+                  categoriaSeleccionada={filtros?.categoria}
+                  ventasPorCategoria={ventasPorCategoria}
+                  isLoading={isLoadingVentasPorCategoria} />
               </Paper>
             }
 

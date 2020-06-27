@@ -4,36 +4,27 @@ import Alert from '@material-ui/lab/Alert';
 import LoadingData from '../Common/LoadingData';
 import Typography from '@material-ui/core/Typography';
 
-export default function GraficoVentasCategoria(props) {
+export default function GraficoVentasProducto(props) {
 
   var ventas = null;
   var colors = ["#8884d8", "#82ca9d", "#ff0000", "#006699", "#cc0000"]
 
-  if(props.ventasPorCategoria != null && props.categoriaSeleccionada){
+  console.log(props.ventasPorProducto);
+
+  if(props.ventasPorProducto != null && props.productoSeleccionado){
 
     ventas = [];
-    props.ventasPorCategoria.forEach((ventaPorCategoria) => {
-
-      var fecha = ventaPorCategoria.fecha.split("-")[2];
-
+    props.ventasPorProducto.forEach((ventaPorProducto) => {
+      var fecha = ventaPorProducto.fecha.split("-")[2] + '/' + ventaPorProducto.fecha.split("-")[1];
       if(!ventas.some(v => v.name === fecha)){
-
-        var model = { fecha: fecha };
-
-        ventaPorCategoria.detalleCategoria.forEach((detalleCategoria) => {
-          if(props.categoriaSeleccionada === detalleCategoria.categoria){
-            model[detalleCategoria.categoria] = detalleCategoria.cantidad;
-          }
-        });
-
-        ventas.push(model);
+        ventas.push({ fecha: fecha, [props.productoSeleccionado]: ventaPorProducto.cantidad });
       }
     });
   }
 
   return (
     <React.Fragment>
-      <Typography component="h2" variant="h6" color="primary" gutterBottom>Ventas de la categoría '{props.categoriaSeleccionada}'</Typography>
+      <Typography component="h2" variant="h6" color="primary" gutterBottom>Ventas del producto '{props.productoSeleccionado}'</Typography>
 
       {props.isLoading && <LoadingData message="Obteniendo ventas..." />}
       {ventas !== null && ventas.length <= 0 && !props.isLoading && <Alert severity="info">No se encontraron ventas para los filtros ingresados.</Alert>}
@@ -48,12 +39,12 @@ export default function GraficoVentasCategoria(props) {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="fecha" />
-        <YAxis unit=" u." />
+        <XAxis dataKey="fecha"/>
+        <YAxis unit=" u."/>
         <Tooltip />
         <Legend />
 
-        <Line key={"grafico-categoriaSeleccionada"} type="monotone" dataKey={props.categoriaSeleccionada} stroke={colors[0]} activeDot={{ r: 8 }} />
+        <Line key={"grafico-productoSeleccionado"} type="monotone" dataKey={props.productoSeleccionado} stroke={colors[1]} activeDot={{ r: 8 }} />
                 
       </LineChart>
         </ResponsiveContainer>

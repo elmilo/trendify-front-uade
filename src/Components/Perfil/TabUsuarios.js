@@ -229,12 +229,7 @@ export default function TabUsuarios(props) {
 
   const handleEliminar = () => {
 
-    console.log('Request BAJA Usuario:');
-    console.log(usuario);
-
     setIsSaving(true);
-
-    //Llamada a la API para dar de eliminar
 
     createEliminarUsuario(usuario.id)
     .then((response) => { onEliminarResponseOk(response) })
