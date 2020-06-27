@@ -4,7 +4,8 @@ const urlApi = "https://seminario-back.herokuapp.com/app";
 
 let config = {
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
   }
 }
 
