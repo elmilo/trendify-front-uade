@@ -51,7 +51,7 @@ export default function Tendencias() {
   const [categorias, setCategorias] = React.useState(null);
 
   //State Combo de Productos
-  const [isLoadingProductos, setIsLoadingProductos] = React.useState(true);
+  const [isLoadingProductos, setIsLoadingProductos] = React.useState(false);
   const [productos, setProductos] = React.useState(null);
 
   //State Ventas por Categoria

@@ -14,7 +14,7 @@ export default function SeleccionFiltros(props) {
             fullWidth
             disabled={props.isLoadingCategorias}
             variant="outlined">
-            <InputLabel id="categoria-ddl-lable">Categoría</InputLabel>
+            <InputLabel id="categoria-ddl-lable">{props.isLoadingCategorias ? "Cargando Categorías..." : "Categoría"}</InputLabel>
             <Select
               labelId="categoria-ddl-lable"
               id="categoria-ddl"
@@ -32,9 +32,11 @@ export default function SeleccionFiltros(props) {
         <Grid item xs={12} md={6} lg={4}>
         <FormControl
             fullWidth
-            disabled={props.isLoadingProductos}
+            disabled={props.categoria === null || props.isLoadingProductos}
             variant="outlined">
-            <InputLabel id="producto-ddl-lable">Producto</InputLabel>
+            <InputLabel id="producto-ddl-lable">
+              {!props.isLoadingCategorias && props.isLoadingProductos ? "Cargando Productos..." : "Producto"}
+            </InputLabel>
             <Select
               labelId="producto-ddl-lable"
               id="producto-ddl"
