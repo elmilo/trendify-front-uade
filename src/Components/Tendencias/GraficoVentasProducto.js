@@ -26,35 +26,39 @@ export default function GraficoVentasProducto(props) {
     });
 
     var diasAnalisis = 10;
-    var dateHoy = new Date(today);
-    var dd = String(dateHoy.getDate()).padStart(2, '0');
-    var mm = String(dateHoy.getMonth() + 1).padStart(2, '0');
-    var fechaHoy = dd + '/' + mm;
 
-    dateHoy = new Date(today);    
-    dateHoy.setDate(dateHoy.getDate() - diasAnalisis);
-    dd = String(dateHoy.getDate()).padStart(2, '0');
-    mm = String(dateHoy.getMonth() + 1).padStart(2, '0');
-    var fechaFin = dd + '/' + mm;
+    if (ventas != null && ventas.length > diasAnalisis) {
 
-    const ventasFechaHoy = ventas.find(ventaPorFecha => ventaPorFecha.fecha === fechaHoy);
-    const ventasFechaFin = ventas.find(ventaPorFecha => ventaPorFecha.fecha === fechaFin);
-
-    var variacion = Math.round((ventasFechaHoy.ventas - ventasFechaFin.ventas) / diasAnalisis, 0);
-
-    var diasProyeccion = 3;
-    var cantProyeccion = ventasFechaHoy.ventas;
-    for(var i = 1; i <= diasProyeccion; i++){
+      var dateHoy = new Date(today);
+      var dd = String(dateHoy.getDate()).padStart(2, '0');
+      var mm = String(dateHoy.getMonth() + 1).padStart(2, '0');
+      var fechaHoy = dd + '/' + mm;
 
       dateHoy = new Date(today);
-      dateHoy.setDate(dateHoy.getDate() + i);
+      dateHoy.setDate(dateHoy.getDate() - diasAnalisis);
       dd = String(dateHoy.getDate()).padStart(2, '0');
       mm = String(dateHoy.getMonth() + 1).padStart(2, '0');
-      var fechaProy = dd + '/' + mm;
+      var fechaFin = dd + '/' + mm;
 
-      cantProyeccion = cantProyeccion + variacion;
+      const ventasFechaHoy = ventas.find(ventaPorFecha => ventaPorFecha.fecha === fechaHoy);
+      const ventasFechaFin = ventas.find(ventaPorFecha => ventaPorFecha.fecha === fechaFin);
 
-      ventas.push({fecha: fechaProy, proyeccion: cantProyeccion});
+      var variacion = Math.round((ventasFechaHoy.ventas - ventasFechaFin.ventas) / diasAnalisis, 0);
+
+      var diasProyeccion = 3;
+      var cantProyeccion = ventasFechaHoy.ventas;
+      for (var i = 1; i <= diasProyeccion; i++) {
+
+        dateHoy = new Date(today);
+        dateHoy.setDate(dateHoy.getDate() + i);
+        dd = String(dateHoy.getDate()).padStart(2, '0');
+        mm = String(dateHoy.getMonth() + 1).padStart(2, '0');
+        var fechaProy = dd + '/' + mm;
+
+        cantProyeccion = cantProyeccion + variacion;
+
+        ventas.push({ fecha: fechaProy, proyeccion: cantProyeccion });
+      }
     }
   }
 
