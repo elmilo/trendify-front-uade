@@ -15,15 +15,16 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Orders(props) {
+export default function TopConsumos(props) {
   const classes = useStyles();
+
   return (
     <React.Fragment>
       <Title>Productos más vendidos</Title>
       {props.topConsumos === null && <LoadingData message="Obteniendo productos..." />}
       {props.topConsumos !== null && props.topConsumos.consumos.length <= 0 && <Alert severity="info">No se encontraron productos.</Alert> }
       {props.topConsumos !== null && props.topConsumos.consumos.length > 0 &&
-        <div class={classes.table}>
+        <div className={classes.table}>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -33,8 +34,8 @@ export default function Orders(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-            {props.topConsumos.consumos.length > 0 && props.topConsumos.consumos.map((consumo) => (
-                <TableRow key={consumo.id}>
+            {props.topConsumos.consumos.length > 0 && props.topConsumos.consumos.map((consumo, index) => (
+                <TableRow key={"consumo-" + index}>
                   <TableCell>{consumo.nombre}</TableCell>
                   <TableCell align='center'>{consumo.cantidad}</TableCell>
                   <TableCell align='center'>{consumo.cantidadSemAnt}</TableCell>

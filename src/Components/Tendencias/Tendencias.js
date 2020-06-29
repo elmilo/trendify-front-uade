@@ -6,10 +6,10 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import GraficoVentasCategoria from "./GraficoVentasCategoria";
 import GraficoVentasProducto from "./GraficoVentasProducto";
+import InfoProducto from "./InfoProducto";
 import { getCategorias, getVentasPorDiaPorCategoria, getVentasPorDiaPorProducto, getProductosPorCategoria } from '../../Axios/Axios';
 import auth from '../../ProtectedRoutes/auth';
 import SeleccionFiltros from "./SeleccionFiltros.js";
-import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,9 +41,10 @@ export default function Tendencias() {
     recargarVentasPorCategoria();
   }
 
-  const handleProductoChange = (value) => {
-    setFormInputChange('producto', value);
-    recargarVentasPorProducto(value.split('|')[1]);
+  const handleProductoChange = (nombre, codProducto) => {
+    setFormInputChange('producto', nombre);
+    setFormInputChange('codProducto', codProducto);
+    recargarVentasPorProducto(codProducto);
   }
 
   //State Combo de Categorías
@@ -61,6 +62,7 @@ export default function Tendencias() {
   //State Ventas por Producto
   const [isLoadingVentasPorProducto, setIsLoadingVentasPorProducto] = React.useState(false);
   const [ventasPorProducto, setVentasPorProducto] = React.useState(null);
+  const [infoProducto, setInfoProducto] = React.useState(null);
 
   const recargarCategorias = (onSuccessCallback, onErrorCallback) => {
 
@@ -116,13 +118,14 @@ export default function Tendencias() {
       });
   }
 
-  const recargarVentasPorProducto = (producto, onSuccessCallback, onErrorCallback) => {
+  const recargarVentasPorProducto = (codProducto, onSuccessCallback, onErrorCallback) => {
 
     setIsLoadingVentasPorProducto(true);
 
-    getVentasPorDiaPorProducto(auth.getIdCliente(), producto)
+    getVentasPorDiaPorProducto(auth.getIdCliente(), codProducto)
       .then((response) => {
         setVentasPorProducto(response);
+        setInfoProducto(response !== null && response?.length > 0 ? response[0]?.producto : null);
         setIsLoadingVentasPorProducto(false);
         if (onSuccessCallback)
           onSuccessCallback();
@@ -157,35 +160,34 @@ export default function Tendencias() {
             </Paper>
           </Grid>
           {(ventasPorProducto != null || isLoadingVentasPorProducto) &&
-            <Grid item md={8} lg={8}>
+            <Grid item lg={8} md={8} sm={8}>
               <Paper className={fixedHeightPaper}>
-                {(ventasPorProducto != null || isLoadingVentasPorProducto) &&
-                  <GraficoVentasProducto
-                    productoSeleccionado={filtros?.producto?.split('|')[0]}
-                    ventasPorProducto={ventasPorProducto}
-                    isLoading={isLoadingVentasPorProducto} />
-                }
+                <GraficoVentasProducto
+                  productoSeleccionado={filtros?.producto}
+                  ventasPorProducto={ventasPorProducto}
+                  isLoading={isLoadingVentasPorProducto} />
               </Paper>
             </Grid>
           }
-          {(ventasPorProducto != null || isLoadingVentasPorProducto) &&
-            <Grid item md={4} lg={4}>
+          {(infoProducto != null || isLoadingVentasPorProducto) &&
+            <Grid item lg={4} md={4} sm={8}>
               <Paper className={fixedHeightPaper}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>Índice T1</Typography>
+                <InfoProducto
+                  infoProducto={infoProducto}
+                  isLoading={isLoadingVentasPorProducto} />
               </Paper>
             </Grid>}
-          <Grid item md={12} lg={12}>
 
-            {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
+          {(ventasPorCategoria != null || isLoadingVentasPorCategoria) &&
+            <Grid item lg={12} md={12} sm={8}>
               <Paper className={fixedHeightPaper}>
                 <GraficoVentasCategoria
                   categoriaSeleccionada={filtros?.categoria}
                   ventasPorCategoria={ventasPorCategoria}
                   isLoading={isLoadingVentasPorCategoria} />
               </Paper>
-            }
-
-          </Grid>
+            </Grid>
+          }
         </Grid>
       </Layout>
     </div>

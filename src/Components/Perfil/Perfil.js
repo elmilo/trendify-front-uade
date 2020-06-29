@@ -152,7 +152,10 @@ export default function Perfil() {
             </Tabs>
           </AppBar>
           <TabPanel value={tabIndex} index={0}>
-            <TabNotificaciones data={notificaciones} isLoading={isLoadingNotificaciones} recargarListadoNotificacionesEvent={recargarListadoNotificaciones}/>
+            <TabNotificaciones 
+              data={notificaciones} 
+              isLoading={isLoadingNotificaciones} 
+              recargarListadoNotificacionesEvent={recargarListadoNotificaciones} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
             <TabUsuarios data={usuarios} isLoading={isLoadingUsuarios} recargarListadoUsuariosEvent={recargarListadoUsuarios} />

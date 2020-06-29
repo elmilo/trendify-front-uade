@@ -1,5 +1,4 @@
 import axios from "axios";
-import dataTopNotificacionesUsuarioResponse from "../Assets/dataTopNotificacionesUsuarioResponse";
 
 let config = {
   headers: {
@@ -40,7 +39,7 @@ export const getVentasPorDiaPorProducto = (idCliente, idProducto) => {
   return axios
     .get("/getConsumosPorClienteYProducto/" + idCliente + '/' + idProducto, null, config)
     .then((response) => {
-      console.log(response);
+      //console.log(response);
       return response.data;
   });
 };

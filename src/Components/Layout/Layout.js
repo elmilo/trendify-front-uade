@@ -122,6 +122,11 @@ const Layout = ({ children, title }) => {
 
     getTopNotificacionesUsuario(auth.getIdUsuario())
       .then((response) => {
+
+        if(response != null && response.length > 0){
+          response.sort((not1, not2) => (not1.leido === not2.leido)? 0 : not1.leido? 1 : -1  );
+        }
+
         setNotificacionesUsuario(response);
         setIsLoadingNotificacionesUsuario(false);
         if (onSuccessCallback)
@@ -169,7 +174,9 @@ const Layout = ({ children, title }) => {
               {title}
             </Typography>
 
-            <NotificationsMenu notificaciones={notificacionesUsuario} isLoading={isLoadingNotificacionesUsuario}/>
+            <NotificationsMenu 
+              notificaciones={notificacionesUsuario} 
+              isLoading={isLoadingNotificacionesUsuario}/>
             <ProfileMenu />
 
           </Toolbar>

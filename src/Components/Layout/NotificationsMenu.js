@@ -6,9 +6,13 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import Badge from "@material-ui/core/Badge";
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Typography from '@material-ui/core/Typography';
-import NotificationImportantIcon from '@material-ui/icons/NotificationImportant';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { setNotificacionUsuarioLeida } from '../../Axios/Axios';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
+import Divider from '@material-ui/core/Divider';
 
 const NotificationsMenu = (props) => {
 
@@ -16,7 +20,10 @@ const NotificationsMenu = (props) => {
 
     const handleOpenMenu = (event) => {
         setAnchor(event.currentTarget);
+    };
 
+    const handleCloseMenu = () => { 
+        setAnchor(null);
         if (props.notificaciones && props.notificaciones.length > 0) {
 
             props.notificaciones.forEach(notificacion => {
@@ -28,9 +35,7 @@ const NotificationsMenu = (props) => {
         }
     };
 
-    const handleCloseMenu = () => setAnchor(null);
-
-    var cantNotificacionesNoLeidas = props.notificaciones?.notificaciones?.filter(not => !not.leido)?.length ?? 0;
+    var cantNotificacionesNoLeidas = props.notificaciones?.filter(not => !not.leido)?.length ?? 0;
 
     return (
         <div>
@@ -46,16 +51,20 @@ const NotificationsMenu = (props) => {
                     anchorEl={anchor}
                     keepMounted
                     open={Boolean(anchor)}
-                    onClose={handleCloseMenu}>
+                    onClose={handleCloseMenu}
+                    style={{maxHeight: 500, overflow: 'auto'}}>
 
                     {!props.isLoading && props.notificaciones.length > 0 && props.notificaciones.map((notificacion, index) =>
-                        <MenuItem key={"userNotification" + index}>
-                            <ListItemIcon>
-                                <NotificationImportantIcon fontSize="small" />
-                            </ListItemIcon>
-                            {notificacion.leido && <Typography variant="inherit">{notificacion.mensaje}</Typography>}
-                            {!notificacion.leido && <Typography variant="inherit"><b>{notificacion.mensaje}</b></Typography>}
-                        </MenuItem>
+                        <div>
+                            <ListItem key={"userNotification" + index} button style={{maxWidth: 400}}>
+                                    <ListItemIcon>
+                                        {!notificacion.leido &&<NotificationsActiveIcon fontSize="small" />}
+                                        {notificacion.leido &&<NotificationsNoneIcon fontSize="small" />}
+                                    </ListItemIcon>
+                                <ListItemText primary={notificacion.mensaje} dense={!notificacion.leido}/>
+                            </ListItem>
+                            <Divider variant="inset" component="li" />
+                        </div>
                     )}
 
                     {!props.isLoading && props.notificaciones.length === 0 &&
