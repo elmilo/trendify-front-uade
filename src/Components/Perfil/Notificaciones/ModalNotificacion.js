@@ -137,7 +137,7 @@ export default function ModalUsuario(props) {
                         <Tooltip title="Se notificará si el promedio de las ventas de los últimos 4 días superó o disminuyó más de un 15% sobre el promedio de los últimos 20 días." placement="right">
                           <FormControlLabel value="criterio02" control={<Radio />} label="Variación del 15% en los últimos 4 días, observación de 20 días" />
                         </Tooltip>              
-                        <Tooltip title="Se notificará si la cantidad de productos vendidos (en última carga) es 'Mayor', 'Mayor o igual', 'Menor' ó 'Menor igual' a la cantidad de productos especificada." placement="right">
+                        <Tooltip title="Se notificará si el promedio de las ventas de los últimos 'X' días superó o disminuyó más de un 'Y%' sobre el promedio de los últimos 'Z' días." placement="right">
                           <FormControlLabel value="criterio03" control={<Radio />} label="Personalizada" />
                         </Tooltip>
                       </RadioGroup>

@@ -30,7 +30,8 @@ export default function TopConsumos(props) {
               <TableRow>
                 <TableCell>Producto</TableCell>
                 <TableCell align='center'>Cantidad</TableCell>
-                <TableCell align='center'>Contra Sem. Anterior</TableCell>
+                <TableCell align='center'>Sem. Anterior</TableCell>
+                <TableCell align='center'>Diferencia</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -39,6 +40,10 @@ export default function TopConsumos(props) {
                   <TableCell>{consumo.nombre}</TableCell>
                   <TableCell align='center'>{consumo.cantidad}</TableCell>
                   <TableCell align='center'>{consumo.cantidadSemAnt}</TableCell>
+                  <TableCell align='center' style={{color: consumo.cantidad - consumo.cantidadSemAnt > 0 ? "green" 
+                                                         : consumo.cantidad - consumo.cantidadSemAnt < 0 ? "red" 
+                                                         : "black"}}>
+                  {consumo.cantidad - consumo.cantidadSemAnt}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

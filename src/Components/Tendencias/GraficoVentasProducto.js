@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 
 export default function GraficoVentasProducto(props) {
 
-  var today = "2020/06/17";
+  var today = "2020/07/01";
   var ventas = null;
   var colors = ["#8884d8", "#82ca9d", "#ff0000", "#006699", "#cc0000"]
 
@@ -17,7 +17,7 @@ export default function GraficoVentasProducto(props) {
       var fecha = ventaPorProducto.fecha.split("-")[2] + '/' + ventaPorProducto.fecha.split("-")[1];
       if(!ventas.some(v => v.name === fecha)){
 
-        if(fecha === "17/06"){
+        if(fecha === "01/07"){
           ventas.push({ fecha: fecha, ventas: ventaPorProducto.cantidad, proyeccion: ventaPorProducto.cantidad });
         }else{
           ventas.push({ fecha: fecha, ventas: ventaPorProducto.cantidad });
