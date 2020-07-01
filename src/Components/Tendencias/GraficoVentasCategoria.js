@@ -14,7 +14,7 @@ export default function GraficoVentasCategoria(props) {
     ventas = [];
     props.ventasPorCategoria.forEach((ventaPorCategoria) => {
 
-      var fecha = ventaPorCategoria.fecha.split("-")[2];
+      var fecha = ventaPorCategoria.fecha.split("-")[2] + '/' + ventaPorCategoria.fecha.split("-")[1];
 
       if(!ventas.some(v => v.name === fecha)){
 

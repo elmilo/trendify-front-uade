@@ -14,7 +14,9 @@ export default function GraficoVentasProducto(props) {
 
     ventas = [];
     props.ventasPorProducto.forEach((ventaPorProducto) => {
+
       var fecha = ventaPorProducto.fecha.split("-")[2] + '/' + ventaPorProducto.fecha.split("-")[1];
+      
       if(!ventas.some(v => v.name === fecha)){
 
         if(fecha === "01/07"){
